@@ -65,6 +65,22 @@ def cmd_refresh(args, settings) -> int:
     return max(code, cmd_check(args, settings))
 
 
+def cmd_monitor(args, settings) -> int:
+    from quant_research.monitor import write_snapshot
+
+    print(write_snapshot(settings))
+    return 0
+
+
+def cmd_study(args, settings) -> int:
+    from quant_research.studies import pillar2
+
+    studies = {"pillar2": pillar2.run}
+    studies[args.name](settings)
+    print(f"{args.name}: results written to README.md and reports/{args.name}/")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="qrf", description="quant-research-framework data tools")
     sub = p.add_subparsers(dest="command", required=True)
@@ -75,6 +91,10 @@ def main(argv: list[str] | None = None) -> int:
         sp.set_defaults(func=fn)
     sub.add_parser("build").set_defaults(func=cmd_build)
     sub.add_parser("check").set_defaults(func=cmd_check)
+    sub.add_parser("monitor").set_defaults(func=cmd_monitor)
+    st = sub.add_parser("study")
+    st.add_argument("name", choices=["pillar2"])
+    st.set_defaults(func=cmd_study)
     args = p.parse_args(argv)
     return args.func(args, load_settings())
 
