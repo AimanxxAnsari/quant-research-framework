@@ -33,25 +33,40 @@ STALE_DAYS = {"daily": 10, "monthly": 75}  # FRED H.10 FX is published weekly wi
 
 def _row(table, check, subject, ok, detail="", warn=False):
     status = "PASS" if ok else ("WARN" if warn else "FAIL")
-    return {"table": table, "check": check, "subject": subject, "status": status,
-            "detail": detail}
+    return {"table": table, "check": check, "subject": subject, "status": status, "detail": detail}
 
 
-def check_observations(obs: pd.DataFrame, series: pd.DataFrame, settings: Settings,
-                       as_of: date) -> list[dict]:
+def check_observations(
+    obs: pd.DataFrame, series: pd.DataFrame, settings: Settings, as_of: date
+) -> list[dict]:
     rows = []
     expected = set(settings.instruments()["fred"])
     present = set(obs["series_id"])
     missing = sorted(expected - present)
-    rows.append(_row("observations", "coverage", "fred series", not missing,
-                     f"missing: {missing}" if missing else f"{len(expected)} series"))
+    rows.append(
+        _row(
+            "observations",
+            "coverage",
+            "fred series",
+            not missing,
+            f"missing: {missing}" if missing else f"{len(expected)} series",
+        )
+    )
     for src, needed in {"treasury": "UST_PAR_10Y", "french": "FF_MKT_RF"}.items():
-        rows.append(_row("observations", "coverage", src, needed in present,
-                         "" if needed in present else f"{needed} missing"))
+        rows.append(
+            _row(
+                "observations",
+                "coverage",
+                src,
+                needed in present,
+                "" if needed in present else f"{needed} missing",
+            )
+        )
 
     dup = obs.duplicated(["series_id", "date"]).sum()
-    rows.append(_row("observations", "uniqueness", "(series_id, date)", dup == 0,
-                     f"{dup} duplicate keys"))
+    rows.append(
+        _row("observations", "uniqueness", "(series_id, date)", dup == 0, f"{dup} duplicate keys")
+    )
     nan = obs["value"].isna().sum()
     rows.append(_row("observations", "missing", "value", nan == 0, f"{nan} missing values"))
 
@@ -62,15 +77,30 @@ def check_observations(obs: pd.DataFrame, series: pd.DataFrame, settings: Settin
         bad = g[(g["value"] < lo) | (g["value"] > hi)]
         if len(bad):
             first = bad.iloc[0]
-            rows.append(_row("observations", "range", sid, False,
-                             f"{len(bad)} values outside [{lo}, {hi}], e.g. "
-                             f"{first['value']} on {first['date']:%Y-%m-%d}"))
+            rows.append(
+                _row(
+                    "observations",
+                    "range",
+                    sid,
+                    False,
+                    f"{len(bad)} values outside [{lo}, {hi}], e.g. "
+                    f"{first['value']} on {first['date']:%Y-%m-%d}",
+                )
+            )
         freq = meta.loc[sid, "frequency"] if sid in meta.index else "daily"
         age = (pd.Timestamp(as_of) - g["date"].max()).days
         limit = STALE_DAYS.get(freq, 10)
         if age > limit:
-            rows.append(_row("observations", "freshness", sid, False,
-                             f"last {g['date'].max():%Y-%m-%d} ({age} days old)", warn=True))
+            rows.append(
+                _row(
+                    "observations",
+                    "freshness",
+                    sid,
+                    False,
+                    f"last {g['date'].max():%Y-%m-%d} ({age} days old)",
+                    warn=True,
+                )
+            )
     rows.append(_row("observations", "range", "all series", True, "checked per series"))
     return rows
 
@@ -79,8 +109,15 @@ def check_prices(prices: pd.DataFrame, tickers: list[str], as_of: date) -> list[
     rows = []
     present = set(prices["ticker"]) if len(prices) else set()
     missing = sorted(set(tickers) - present)
-    rows.append(_row("prices", "coverage", "tickers", not missing,
-                     f"missing: {missing}" if missing else f"{len(tickers)} tickers"))
+    rows.append(
+        _row(
+            "prices",
+            "coverage",
+            "tickers",
+            not missing,
+            f"missing: {missing}" if missing else f"{len(tickers)} tickers",
+        )
+    )
     if not len(prices):
         return rows
     dup = prices.duplicated(["ticker", "date"]).sum()
@@ -88,24 +125,51 @@ def check_prices(prices: pd.DataFrame, tickers: list[str], as_of: date) -> list[
     nan = prices["close"].isna().sum() + prices["adj_close"].isna().sum()
     rows.append(_row("prices", "missing", "close / adj_close", nan == 0, f"{nan} missing"))
     p = prices
-    bad = ((p[["open", "high", "low", "close", "adj_close"]] <= 0).any(axis=1)
-           | (p["low"] > p[["open", "close"]].min(axis=1) + 1e-9)
-           | (p["high"] < p[["open", "close"]].max(axis=1) - 1e-9))
-    rows.append(_row("prices", "ohlc", "all tickers", not bad.any(),
-                     f"{int(bad.sum())} inconsistent bars"
-                     + (f", e.g. {p.loc[bad, 'ticker'].iloc[0]} "
-                        f"{p.loc[bad, 'date'].iloc[0]:%Y-%m-%d}" if bad.any() else "")))
+    bad = (
+        (p[["open", "high", "low", "close", "adj_close"]] <= 0).any(axis=1)
+        | (p["low"] > p[["open", "close"]].min(axis=1) + 1e-9)
+        | (p["high"] < p[["open", "close"]].max(axis=1) - 1e-9)
+    )
+    rows.append(
+        _row(
+            "prices",
+            "ohlc",
+            "all tickers",
+            not bad.any(),
+            f"{int(bad.sum())} inconsistent bars"
+            + (
+                f", e.g. {p.loc[bad, 'ticker'].iloc[0]} {p.loc[bad, 'date'].iloc[0]:%Y-%m-%d}"
+                if bad.any()
+                else ""
+            ),
+        )
+    )
     for t, g in p.groupby("ticker", sort=True):
         ret = g["adj_close"].pct_change().abs()
         jumps = g.loc[ret > 0.40, "date"]
         if len(jumps):
-            rows.append(_row("prices", "jumps", t, False,
-                             f"{len(jumps)} daily moves > 40%, first {jumps.iloc[0]:%Y-%m-%d}",
-                             warn=True))
+            rows.append(
+                _row(
+                    "prices",
+                    "jumps",
+                    t,
+                    False,
+                    f"{len(jumps)} daily moves > 40%, first {jumps.iloc[0]:%Y-%m-%d}",
+                    warn=True,
+                )
+            )
         age = (pd.Timestamp(as_of) - g["date"].max()).days
         if age > STALE_DAYS["daily"]:
-            rows.append(_row("prices", "freshness", t, False,
-                             f"last {g['date'].max():%Y-%m-%d} ({age} days old)", warn=True))
+            rows.append(
+                _row(
+                    "prices",
+                    "freshness",
+                    t,
+                    False,
+                    f"last {g['date'].max():%Y-%m-%d} ({age} days old)",
+                    warn=True,
+                )
+            )
     return rows
 
 

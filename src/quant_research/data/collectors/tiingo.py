@@ -17,9 +17,18 @@ from quant_research.data.settings import Settings, secret
 SOURCE = "tiingo"
 URL = "https://api.tiingo.com/tiingo/daily/{ticker}/prices"
 COLUMNS = {
-    "open": "open", "high": "high", "low": "low", "close": "close", "volume": "volume",
-    "adjOpen": "adj_open", "adjHigh": "adj_high", "adjLow": "adj_low", "adjClose": "adj_close",
-    "adjVolume": "adj_volume", "divCash": "div_cash", "splitFactor": "split_factor",
+    "open": "open",
+    "high": "high",
+    "low": "low",
+    "close": "close",
+    "volume": "volume",
+    "adjOpen": "adj_open",
+    "adjHigh": "adj_high",
+    "adjLow": "adj_low",
+    "adjClose": "adj_close",
+    "adjVolume": "adj_volume",
+    "divCash": "div_cash",
+    "splitFactor": "split_factor",
 }
 
 
@@ -28,9 +37,7 @@ def all_tickers(settings: Settings) -> list[str]:
     return [t for group in groups.values() for t in group]
 
 
-def fetch(
-    store: RawStore, settings: Settings, tickers: list[str] | None = None
-) -> list[Snapshot]:
+def fetch(store: RawStore, settings: Settings, tickers: list[str] | None = None) -> list[Snapshot]:
     start = settings.instruments()["tiingo"]["start_date"]
     headers = {"Authorization": f"Token {secret('TIINGO_API_KEY')}"}
     snaps = []

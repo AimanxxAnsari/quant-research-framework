@@ -51,10 +51,14 @@ def parse(payload: bytes, dataset: str) -> pd.DataFrame:
         raise ValueError(f"could not find a daily data block in {dataset}")
     df = pd.DataFrame(rows, columns=["date", *header])
     long = df.melt(id_vars="date", var_name="col", value_name="value")
-    return pd.DataFrame(
-        {
-            "series_id": long["col"].map(series_id),
-            "date": pd.to_datetime(long["date"], format="%Y%m%d"),
-            "value": pd.to_numeric(long["value"], errors="coerce"),
-        }
-    ).dropna(subset=["value"]).reset_index(drop=True)
+    return (
+        pd.DataFrame(
+            {
+                "series_id": long["col"].map(series_id),
+                "date": pd.to_datetime(long["date"], format="%Y%m%d"),
+                "value": pd.to_numeric(long["value"], errors="coerce"),
+            }
+        )
+        .dropna(subset=["value"])
+        .reset_index(drop=True)
+    )

@@ -69,18 +69,39 @@ def build_series(obs: pd.DataFrame, settings: Settings) -> pd.DataFrame:
     for sid, src in obs[["series_id", "source_id"]].drop_duplicates().itertuples(index=False):
         if src == "fred":
             meta = fred.get(sid, {})
-            rows.append({"series_id": sid, "source_id": src, "name": meta.get("name", sid),
-                         "asset_class": meta.get("asset_class"), "unit": meta.get("unit"),
-                         "frequency": meta.get("frequency")})
+            rows.append(
+                {
+                    "series_id": sid,
+                    "source_id": src,
+                    "name": meta.get("name", sid),
+                    "asset_class": meta.get("asset_class"),
+                    "unit": meta.get("unit"),
+                    "frequency": meta.get("frequency"),
+                }
+            )
         elif src == "treasury":
             kind = "real" if sid.startswith("UST_REAL") else "par"
-            rows.append({"series_id": sid, "source_id": src,
-                         "name": f"UST {kind} yield {sid.rsplit('_', 1)[1]}",
-                         "asset_class": "rates", "unit": "percent", "frequency": "daily"})
+            rows.append(
+                {
+                    "series_id": sid,
+                    "source_id": src,
+                    "name": f"UST {kind} yield {sid.rsplit('_', 1)[1]}",
+                    "asset_class": "rates",
+                    "unit": "percent",
+                    "frequency": "daily",
+                }
+            )
         else:
-            rows.append({"series_id": sid, "source_id": src, "name": f"Fama-French {sid[3:]}",
-                         "asset_class": "factor", "unit": "percent per day",
-                         "frequency": "daily"})
+            rows.append(
+                {
+                    "series_id": sid,
+                    "source_id": src,
+                    "name": f"Fama-French {sid[3:]}",
+                    "asset_class": "factor",
+                    "unit": "percent per day",
+                    "frequency": "daily",
+                }
+            )
     cols = ["series_id", "source_id", "name", "asset_class", "unit", "frequency"]
     return pd.DataFrame(rows, columns=cols).sort_values("series_id").reset_index(drop=True)
 

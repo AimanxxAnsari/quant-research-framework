@@ -4,6 +4,6 @@ Each collector exposes ``fetch(store, settings, ...) -> list[Snapshot]`` (networ
 ``parse(payload, dataset) -> DataFrame`` (pure, tested offline with fixtures).
 """
 
-from quant_research.data.collectors import french, fred, tiingo, treasury
+from quant_research.data.collectors import fred, french, tiingo, treasury
 
 COLLECTORS = {"fred": fred, "treasury": treasury, "french": french, "tiingo": tiingo}

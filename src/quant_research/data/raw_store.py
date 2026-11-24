@@ -55,8 +55,14 @@ class RawStore:
         latest = self.latest(source, dataset)
         if latest is not None and latest.sha256 == sha:
             event = Snapshot(
-                source, dataset, latest.path, sha, len(payload),
-                ts.isoformat(), redact_url(url), "unchanged",
+                source,
+                dataset,
+                latest.path,
+                sha,
+                len(payload),
+                ts.isoformat(),
+                redact_url(url),
+                "unchanged",
             )
             self._append(event)
             return latest
@@ -89,7 +95,8 @@ class RawStore:
 
     def latest(self, source: str, dataset: str) -> Snapshot | None:
         stored = [
-            e for e in self.events()
+            e
+            for e in self.events()
             if e.source == source and e.dataset == dataset and e.status == "stored"
         ]
         return stored[-1] if stored else None
