@@ -1,0 +1,28 @@
+# --- Secrets: NEVER committed ---
+.env
+.env.*
+!.env.example
+
+# --- Data: raw vendor data and derived tables are never committed (ADR-0002) ---
+/data/
+*.duckdb
+*.duckdb.wal
+*.parquet
+
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.venv/
+.pytest_cache/
+.ruff_cache/
+.hypothesis/
+.ipynb_checkpoints/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

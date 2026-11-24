@@ -1,0 +1,31 @@
+# Source register: every dataset the framework touches, with access route and terms.
+# Review terms before adding automated collection. Raw data is never committed.
+sources:
+  fred:
+    provider: Federal Reserve Bank of St. Louis (FRED)
+    content: Interest rates, FX (H.10), implied-volatility indices, macro series
+    access: REST API, free key (FRED_API_KEY)
+    terms_url: https://fred.stlouisfed.org/legal/
+    notes: Individual series can carry their own copyright notices; check before redistributing.
+    redistribution: derived results and charts only
+  treasury:
+    provider: U.S. Department of the Treasury
+    content: Daily par yield curve and real (TIPS) par yield curve
+    access: CSV download, no key
+    terms_url: https://home.treasury.gov/policy-issues/financing-the-government/interest-rate-statistics
+    notes: Par yields are interpolated curve values, not traded yields.
+    redistribution: public data
+  french:
+    provider: Kenneth R. French Data Library (Dartmouth)
+    content: Daily Fama-French 3 factors and momentum factor (US)
+    access: ZIP download, no key
+    terms_url: https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html
+    notes: Free for research use; cite the library.
+    redistribution: derived results and charts only
+  tiingo:
+    provider: Tiingo
+    content: End-of-day ETF prices, split/dividend adjusted
+    access: REST API, free tier (TIINGO_API_KEY); ~50 requests/hour, 1,000/day
+    terms_url: https://www.tiingo.com/about/terms
+    notes: Internal use only on the free tier; never redistribute raw prices.
+    redistribution: derived results and charts only

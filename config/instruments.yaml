@@ -1,0 +1,52 @@
+# Instrument master. Every series carries its unit, frequency and quote convention.
+fred:
+  # Rates (percent, daily, business days)
+  DGS3MO:  {name: "UST 3M constant maturity", asset_class: rates, unit: percent, frequency: daily}
+  DGS2:    {name: "UST 2Y constant maturity", asset_class: rates, unit: percent, frequency: daily}
+  DGS5:    {name: "UST 5Y constant maturity", asset_class: rates, unit: percent, frequency: daily}
+  DGS10:   {name: "UST 10Y constant maturity", asset_class: rates, unit: percent, frequency: daily}
+  DGS30:   {name: "UST 30Y constant maturity", asset_class: rates, unit: percent, frequency: daily}
+  T10Y2Y:  {name: "10Y minus 2Y spread", asset_class: rates, unit: percent, frequency: daily}
+  DFII10:  {name: "10Y TIPS real yield", asset_class: rates, unit: percent, frequency: daily}
+  T10YIE:  {name: "10Y breakeven inflation", asset_class: rates, unit: percent, frequency: daily}
+  DFF:     {name: "Effective federal funds rate", asset_class: rates, unit: percent, frequency: daily}
+  SOFR:    {name: "Secured overnight financing rate", asset_class: rates, unit: percent, frequency: daily}
+  # Implied volatility indices (index points)
+  VIXCLS:  {name: "CBOE VIX (S&P 500 30d implied vol)", asset_class: volatility, unit: index, frequency: daily}
+  OVXCLS:  {name: "CBOE crude oil volatility index", asset_class: volatility, unit: index, frequency: daily}
+  GVZCLS:  {name: "CBOE gold volatility index", asset_class: volatility, unit: index, frequency: daily}
+  # FX: H.10 noon New York buying rates. Quote convention matters.
+  DEXUSEU: {name: "EUR/USD", asset_class: fx, unit: USD per EUR, frequency: daily, quote: USD_per_foreign}
+  DEXUSUK: {name: "GBP/USD", asset_class: fx, unit: USD per GBP, frequency: daily, quote: USD_per_foreign}
+  DEXUSAL: {name: "AUD/USD", asset_class: fx, unit: USD per AUD, frequency: daily, quote: USD_per_foreign}
+  DEXUSNZ: {name: "NZD/USD", asset_class: fx, unit: USD per NZD, frequency: daily, quote: USD_per_foreign}
+  DEXJPUS: {name: "USD/JPY", asset_class: fx, unit: JPY per USD, frequency: daily, quote: foreign_per_USD}
+  DEXSZUS: {name: "USD/CHF", asset_class: fx, unit: CHF per USD, frequency: daily, quote: foreign_per_USD}
+  DEXCAUS: {name: "USD/CAD", asset_class: fx, unit: CAD per USD, frequency: daily, quote: foreign_per_USD}
+  DEXNOUS: {name: "USD/NOK", asset_class: fx, unit: NOK per USD, frequency: daily, quote: foreign_per_USD}
+  DEXSDUS: {name: "USD/SEK", asset_class: fx, unit: SEK per USD, frequency: daily, quote: foreign_per_USD}
+  # Commodity spot (EIA via FRED)
+  DCOILWTICO:   {name: "WTI crude spot", asset_class: commodity, unit: USD per barrel, frequency: daily}
+  DCOILBRENTEU: {name: "Brent crude spot", asset_class: commodity, unit: USD per barrel, frequency: daily}
+  # Macro (monthly)
+  CPIAUCSL: {name: "US CPI, all items, SA", asset_class: macro, unit: index, frequency: monthly}
+  UNRATE:   {name: "US unemployment rate", asset_class: macro, unit: percent, frequency: monthly}
+
+treasury:
+  nominal_from_year: 1990
+  real_from_year: 2003
+
+french:
+  datasets:
+    F-F_Research_Data_Factors_daily: [Mkt-RF, SMB, HML, RF]
+    F-F_Momentum_Factor_daily: [Mom]
+
+tiingo:
+  start_date: "2000-01-01"
+  etfs:
+    equity_us: [SPY, QQQ, IWM, RSP]
+    equity_intl: [EFA, VGK, EWJ, EEM, EWA, EWC]
+    sectors: [XLE, XLF, XLK, XLV, XLU, XLP, XLI]
+    bonds: [TLT, IEF, SHY, TIP, LQD, HYG]
+    commodities: [GLD, SLV, GDX, USO, UNG, DBC, DBA, CPER]
+    fx: [UUP, FXE]

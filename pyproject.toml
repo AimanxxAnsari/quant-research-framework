@@ -1,0 +1,43 @@
+[project]
+name = "quant-research-framework"
+version = "0.1.0"
+description = "Cross-asset quant research framework: point-in-time data foundation, statistics, futures, backtesting and validation, risk, portfolio construction, volatility and regime models."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=1.1",
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "pyarrow>=17",
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+    "requests>=2.32",
+]
+
+[project.scripts]
+qrf = "quant_research.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "hypothesis>=6.100",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.9,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "quant_research"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "NPY"]
