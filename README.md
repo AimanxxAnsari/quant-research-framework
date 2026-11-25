@@ -98,7 +98,7 @@ as a normal distribution would produce. Negatively skewed: SPY, GLD, USO, UST 10
 | rogers_satchell | 0.137 | 0.672 | 0.422 |
 | yang_zhang | 0.166 | 0.661 | 0.404 |
 
-![vol estimators](reports/pillar2/figures/spy_vol_estimators.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="reports/pillar2/figures/spy_vol_estimators-dark.png"><img src="reports/pillar2/figures/spy_vol_estimators.png" alt="vol estimators" width="100%"></picture>
 
 Parkinson, Garman-Klass and Rogers-Satchell use only the trading session, so they read lower
 than close-to-close (16.2%) by missing overnight gaps; Yang-Zhang adds the gap
@@ -115,7 +115,7 @@ correlation for close-to-close.
 | JPY (noon NY fix) | -0.161 | -0.015 | 0.008 | -0.168 | -0.168 | 6701 |
 | AUD (noon NY fix) | 0.269 | 0.218 | -0.021 | 0.466 | 0.468 | 6701 |
 
-![lead-lag](reports/pillar2/figures/spy_aud_lead_lag.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="reports/pillar2/figures/spy_aud_lead_lag-dark.png"><img src="reports/pillar2/figures/spy_aud_lead_lag.png" alt="lead-lag" width="100%"></picture>
 
 FRED's H.10 FX rates are fixed at noon New York, four hours before SPY closes, so part of SPY's
 afternoon move can only appear in the next day's fixing.
@@ -172,7 +172,7 @@ evidence of long memory.
 
 ### Cross-asset correlation
 
-![correlation](reports/pillar2/figures/correlation_matrix.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="reports/pillar2/figures/correlation_matrix-dark.png"><img src="reports/pillar2/figures/correlation_matrix.png" alt="correlation" width="100%"></picture>
 
 Stock-bond correlation (SPY vs TLT, weekly): -0.15 over the full sample
 vs 0.27 in the last 12 months. Correlations are unstable; a hedge
@@ -219,7 +219,7 @@ uses data where the right answer is known.
 | 1000 days | 9.5 | 7.4 | 12.7 | 61% |
 | 2500 days | 9.9 | 8.2 | 11.9 | 53% |
 
-![half-life](reports/pillar5/figures/half_life_bias.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="reports/pillar5/figures/half_life_bias-dark.png"><img src="reports/pillar5/figures/half_life_bias.png" alt="half-life" width="100%"></picture>
 
 OLS on an AR(1) is biased towards faster mean reversion (Kendall 1954). With one year of data
 the median estimate is 8.2 days for a true 10, and the
@@ -257,7 +257,7 @@ a true random walk far too often; the robust z* (used in Pillar 2) stays close t
 | EWMA + normal quantile | 1.9% | 100.0% |
 | historical 250-day | 1.5% | 72.0% |
 
-![var](reports/pillar5/figures/var_breach_rates.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="reports/pillar5/figures/var_breach_rates-dark.png"><img src="reports/pillar5/figures/var_breach_rates.png" alt="var" width="100%"></picture>
 
 Knowing the true volatility and tail shape gives the right breach rate. A normal quantile on
 Student-t returns under-reserves, and a slow historical window reacts late to volatility
@@ -272,7 +272,7 @@ clusters. Pillar 9 extends this with conditional-coverage tests and Expected Sho
 | 100 strategies | 0.78 | 0.80 |
 | 1000 strategies | 1.02 | 1.03 |
 
-![max sharpe](reports/pillar5/figures/max_sharpe_vs_trials.png)
+<picture><source media="(prefers-color-scheme: dark)" srcset="reports/pillar5/figures/max_sharpe_vs_trials-dark.png"><img src="reports/pillar5/figures/max_sharpe_vs_trials.png" alt="max sharpe" width="100%"></picture>
 
 Trying more strategies on noise mechanically raises the best Sharpe ratio, closely matching the
 Bailey & Lopez de Prado formula. A grid of 25 moving-average crossover rules

@@ -14,9 +14,17 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+from matplotlib.ticker import PercentFormatter  # noqa: E402
 
 from quant_research.data import access  # noqa: E402
 from quant_research.data.settings import Settings  # noqa: E402
+from quant_research.plotting import (  # noqa: E402
+    Theme,
+    diverging_cmap,
+    picture_md,
+    save_light_dark,
+)
+from quant_research.plotting import title as chart_title  # noqa: E402
 from quant_research.reporting import inject_file, md_table  # noqa: E402
 from quant_research.stats import dependence as dep  # noqa: E402
 from quant_research.stats import distribution  # noqa: E402
@@ -73,13 +81,30 @@ def vol_estimators(settings: Settings, out: Path) -> pd.DataFrame:
     res = pd.DataFrame(rows).T
     res.index.name = "estimator (SPY, 21-day)"
 
-    recent = est.loc["2019":, ["close_to_close", "parkinson", "yang_zhang", "ewma"]]
-    fig, ax = plt.subplots(figsize=(10, 3.6))
-    recent.plot(ax=ax, lw=0.9)
-    ax.set(title="SPY 21-day volatility estimators (annualised)", ylabel="vol", xlabel="")
-    fig.tight_layout()
-    fig.savefig(_fig_path(out, "spy_vol_estimators.png"), dpi=120)
-    plt.close(fig)
+    cols = {
+        "close_to_close": "close-to-close",
+        "parkinson": "Parkinson",
+        "yang_zhang": "Yang-Zhang",
+        "ewma": "EWMA",
+    }
+    recent = est.loc["2019":, list(cols)].iloc[::5]  # weekly sample for legibility
+
+    def draw(t: Theme):
+        fig, ax = plt.subplots(figsize=(10, 4.0))
+        for i, (c, label) in enumerate(cols.items()):
+            ax.plot(recent.index, recent[c], color=t.series[i], label=label, lw=1.8)
+        ax.yaxis.set_major_formatter(PercentFormatter(1.0, decimals=0))
+        ax.set_ylim(bottom=0)
+        ax.legend(loc="upper left", bbox_to_anchor=(0, -0.08), ncol=4, labelcolor=t.ink2)
+        chart_title(
+            ax,
+            "SPY volatility: four estimators, one market",
+            "21-day windows, annualised, sampled weekly since 2019",
+            t,
+        )
+        return fig
+
+    save_light_dark(draw, _fig_path(out, "spy_vol_estimators.png"))
     return res
 
 
@@ -112,16 +137,38 @@ def nonsynchronous(settings: Settings, out: Path) -> pd.DataFrame:
     res.index.name = "SPY (4 pm close) vs"
 
     ll = dep.lead_lag_corr(data["SPY"], data["DEXUSAL"], range(-3, 4))
-    fig, ax = plt.subplots(figsize=(7, 3.2))
-    ax.bar(ll.index, ll.values)
-    ax.set(
-        title="corr(SPY_t, AUD/USD_t+k): AUD fixed at noon, SPY closes at 4 pm",
-        xlabel="lag k (days)",
-        ylabel="correlation",
-    )
-    fig.tight_layout()
-    fig.savefig(_fig_path(out, "spy_aud_lead_lag.png"), dpi=120)
-    plt.close(fig)
+
+    def draw(t: Theme):
+        fig, ax = plt.subplots(figsize=(8, 3.6))
+        colors = [t.series[0] if k in (0, 1) else t.muted for k in ll.index]
+        ax.bar(ll.index, ll.values, width=0.45, color=colors)
+        ax.axhline(0, color=t.baseline, lw=1)
+        ax.set_ylim(top=ll.max() * 1.25)
+        for k in (0, 1):
+            ax.annotate(
+                f"{ll[k]:.2f}",
+                (k, ll[k]),
+                xytext=(0, 4),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                fontsize=9,
+                color=t.ink,
+            )
+        ax.set_xticks(list(ll.index), [f"{k:+d}" if k else "0 (same day)" for k in ll.index])
+        ax.set(
+            xlabel="lag k in days: correlation of SPY on day t with AUD/USD on day t+k",
+            ylabel="correlation",
+        )
+        chart_title(
+            ax,
+            "Part of AUD's reaction to US stocks shows up a day late",
+            "AUD/USD is fixed at noon New York; SPY closes at 4 pm",
+            t,
+        )
+        return fig
+
+    save_light_dark(draw, _fig_path(out, "spy_aud_lead_lag.png"))
     return res
 
 
@@ -180,21 +227,49 @@ def correlation_figure(settings: Settings, out: Path) -> tuple[pd.DataFrame, pd.
     w = ret.log_returns(ret.resample_prices(access.prices(settings, tickers))).dropna()
     full = w.corr()
     last = w.loc[w.index.max() - pd.DateOffset(years=1) :].corr()
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-    for ax, c, title in [
-        (axes[0], full, f"Weekly returns {w.index.min():%Y}-{w.index.max():%Y}"),
-        (axes[1], last, "Last 12 months"),
-    ]:
-        im = ax.imshow(c.values, vmin=-1, vmax=1, cmap="RdBu_r")
-        ax.set_xticks(range(len(tickers)), tickers, rotation=45)
-        ax.set_yticks(range(len(tickers)), tickers)
-        for i in range(len(tickers)):
-            for j in range(len(tickers)):
-                ax.text(j, i, f"{c.values[i, j]:.2f}", ha="center", va="center", fontsize=7)
-        ax.set_title(title)
-    fig.colorbar(im, ax=axes, shrink=0.8)
-    fig.savefig(_fig_path(out, "correlation_matrix.png"), dpi=120, bbox_inches="tight")
-    plt.close(fig)
+
+    def draw(t: Theme):
+        fig, axes = plt.subplots(1, 2, figsize=(12.5, 5.4))
+        cmap = diverging_cmap(t)
+        for ax, c, label in [
+            (axes[0], full, f"{w.index.min():%Y} to {w.index.max():%Y}"),
+            (axes[1], last, "Last 12 months"),
+        ]:
+            im = ax.imshow(c.values, vmin=-1, vmax=1, cmap=cmap)
+            ax.grid(False)
+            for side in ("left", "bottom"):
+                ax.spines[side].set_visible(False)
+            ax.set_xticks(range(len(tickers)), tickers, rotation=0)
+            ax.set_yticks(range(len(tickers)), tickers)
+            ax.tick_params(length=0)
+            for i in range(len(tickers)):
+                for j in range(len(tickers)):
+                    v = c.values[i, j]
+                    ax.text(
+                        j,
+                        i,
+                        f"{v:.2f}",
+                        ha="center",
+                        va="center",
+                        fontsize=7.5,
+                        color=t.surface if abs(v) > 0.55 else t.ink,
+                    )
+            ax.set_title(label, loc="left", fontsize=10.5, color=t.ink2, pad=8)
+        cb = fig.colorbar(im, ax=axes, shrink=0.75, pad=0.02)
+        cb.outline.set_visible(False)
+        cb.ax.tick_params(colors=t.muted, length=0)
+        cb.set_label("correlation of weekly returns", color=t.ink2)
+        fig.suptitle(
+            "Cross-asset correlation is not stable",
+            x=0.06,
+            ha="left",
+            fontsize=12.5,
+            fontweight="bold",
+            color=t.ink,
+        )
+        return fig
+
+    save_light_dark(draw, _fig_path(out, "correlation_matrix.png"))
     return full, last
 
 
@@ -259,7 +334,7 @@ as a normal distribution would produce. Negatively skewed: {", ".join(neg_skew) 
 
 {md_table(vols)}
 
-![vol estimators]({fig}/spy_vol_estimators.png)
+{picture_md(f"{fig}/spy_vol_estimators.png", "vol estimators")}
 
 Parkinson, Garman-Klass and Rogers-Satchell use only the trading session, so they read lower
 than close-to-close ({cc["mean ann. vol"]:.1%}) by missing overnight gaps; Yang-Zhang adds the gap
@@ -272,7 +347,7 @@ correlation for close-to-close.
 
 {md_table(nonsync, {"days": "{:.0f}"})}
 
-![lead-lag]({fig}/spy_aud_lead_lag.png)
+{picture_md(f"{fig}/spy_aud_lead_lag.png", "lead-lag")}
 
 FRED's H.10 FX rates are fixed at noon New York, four hours before SPY closes, so part of SPY's
 afternoon move can only appear in the next day's fixing.
@@ -308,7 +383,7 @@ evidence of long memory.
 
 ### Cross-asset correlation
 
-![correlation]({fig}/correlation_matrix.png)
+{picture_md(f"{fig}/correlation_matrix.png", "correlation")}
 
 Stock-bond correlation (SPY vs TLT, weekly): {corr_full.loc["SPY", "TLT"]:.2f} over the full sample
 vs {corr_last.loc["SPY", "TLT"]:.2f} in the last 12 months. Correlations are unstable; a hedge

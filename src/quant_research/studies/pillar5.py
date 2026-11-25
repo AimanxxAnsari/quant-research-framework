@@ -12,9 +12,19 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+from matplotlib.ticker import PercentFormatter  # noqa: E402
 from scipy import stats  # noqa: E402
 
 from quant_research.data.settings import Settings  # noqa: E402
+from quant_research.plotting import (  # noqa: E402
+    Theme,
+    end_label,
+    legend_top,
+    picture_md,
+    ref_line,
+    save_light_dark,
+)
+from quant_research.plotting import title as chart_title  # noqa: E402
 from quant_research.reporting import inject_file, md_table  # noqa: E402
 from quant_research.risk.var import breaches, ewma_normal_var, historical_var, kupiec_pof  # noqa: E402
 from quant_research.stats.mean_reversion import ar1_fit, engle_granger, ols_levels  # noqa: E402
@@ -46,18 +56,39 @@ def half_life_study(out: Path, reps: int = 500, true_hl: float = 10.0) -> pd.Dat
             "95th pct": float(np.quantile(est, 0.95)),
             "share below truth": float(np.mean(est < true_hl)),
         }
-    fig, ax = plt.subplots(figsize=(8, 3.4))
-    ax.boxplot(list(samples.values()), tick_labels=[str(k) for k in samples], showfliers=False)
-    ax.axhline(true_hl, color="C3", ls="--", label="true half-life (10 days)")
-    ax.set(
-        title="Estimated OU half-life vs sample length",
-        xlabel="sample length (days)",
-        ylabel="estimated half-life",
-    )
-    ax.legend()
-    fig.tight_layout()
-    fig.savefig(_fig(out, "half_life_bias.png"), dpi=120)
-    plt.close(fig)
+
+    def draw(t: Theme):
+        fig, ax = plt.subplots(figsize=(9, 3.8))
+        xs = np.arange(len(samples))
+        for x, est in zip(xs, samples.values(), strict=True):
+            lo, med, hi = np.quantile(est, [0.05, 0.5, 0.95])
+            q1, q3 = np.quantile(est, [0.25, 0.75])
+            ax.plot([x, x], [lo, hi], color=t.series[0], lw=2, alpha=0.45)
+            ax.plot([x, x], [q1, q3], color=t.series[0], lw=7, solid_capstyle="butt")
+            ax.plot(x, med, "o", color=t.surface, mec=t.series[0], mew=2, ms=8)
+            ax.annotate(
+                f"{med:.1f}",
+                (x, med),
+                xytext=(9, 0),
+                textcoords="offset points",
+                va="center",
+                fontsize=8.5,
+                color=t.ink2,
+            )
+        ref_line(ax, y=true_hl, label=f"true half-life {true_hl:.0f} days", t=t)
+        ax.set_xticks(xs, [f"{n:,}" for n in samples])
+        ax.set_xlim(-0.5, len(samples) + 0.7)  # room for the reference label
+        ax.set(xlabel="sample length (trading days)", ylabel="estimated half-life (days)")
+        chart_title(
+            ax,
+            "Short samples make mean reversion look faster than it is",
+            "Median (dot), 25-75% (bar) and 5-95% (line) of estimates; "
+            f"{reps} simulations per length",
+            t,
+        )
+        return fig
+
+    save_light_dark(draw, _fig(out, "half_life_bias.png"))
     df = pd.DataFrame(rows).T
     df.index.name = f"sample (true half-life {true_hl:.0f})"
     return df
@@ -138,14 +169,38 @@ def var_study(out: Path, reps: int = 100, n: int = 2500) -> pd.DataFrame:
         }
     )
     df.index.name = "99% VaR method on GARCH-t data"
-    fig, ax = plt.subplots(figsize=(8, 3))
-    ax.barh(df.index, df["mean breach rate (target 1%)"] * 100)
-    ax.axvline(1.0, color="C3", ls="--", label="target 1%")
-    ax.set(xlabel="breach rate (%)", title="99% VaR breach rates on fat-tailed, clustered returns")
-    ax.legend()
-    fig.tight_layout()
-    fig.savefig(_fig(out, "var_breach_rates.png"), dpi=120)
-    plt.close(fig)
+    rates = df["mean breach rate (target 1%)"]
+
+    def draw(t: Theme):
+        fig, ax = plt.subplots(figsize=(9, 3.0))
+        y = np.arange(len(rates))[::-1]
+        ax.barh(y, rates.values, height=0.42, color=t.series[0])
+        for yi, v in zip(y, rates.values, strict=True):
+            ax.annotate(
+                f"{v:.1%}",
+                (v, yi),
+                xytext=(5, 0),
+                textcoords="offset points",
+                va="center",
+                fontsize=9,
+                color=t.ink,
+            )
+        ax.set_yticks(y, rates.index)
+        ax.grid(axis="y", visible=False)
+        ax.grid(axis="x", visible=True)
+        ax.xaxis.set_major_formatter(PercentFormatter(1.0, decimals=1))
+        ax.set_xlim(0, rates.max() * 1.25)
+        ref_line(ax, x=0.01, label="target 1%", t=t)
+        ax.set_xlabel("share of days the loss exceeded the 99% VaR")
+        chart_title(
+            ax,
+            "99% VaR breach rates on fat-tailed, clustered returns",
+            f"GARCH(1,1) with Student-t(5) shocks; {reps} paths of {n:,} days",
+            t,
+        )
+        return fig
+
+    save_light_dark(draw, _fig(out, "var_breach_rates.png"))
     return df
 
 
@@ -192,24 +247,40 @@ def overfitting_study(out: Path, reps: int = 300, ma_reps: int = 60) -> tuple[pd
         "theory_independent": of.expected_max_sharpe(len(grid), sd),
     }
 
-    fig, ax = plt.subplots(figsize=(8, 3.4))
-    ax.plot(curve_n, sim_curve, "o-", label="simulated best Sharpe")
-    ax.plot(
-        curve_n,
-        [of.expected_max_sharpe(n, sd) for n in curve_n],
-        "--",
-        label="Bailey & Lopez de Prado E[max]",
-    )
-    ax.set_xscale("log")
-    ax.set(
-        xlabel="number of strategies tried",
-        ylabel="best annualised Sharpe",
-        title="Best backtest among no-skill strategies (10 years each)",
-    )
-    ax.legend()
-    fig.tight_layout()
-    fig.savefig(_fig(out, "max_sharpe_vs_trials.png"), dpi=120)
-    plt.close(fig)
+    theory = [of.expected_max_sharpe(n, sd) for n in curve_n]
+
+    def draw(t: Theme):
+        fig, ax = plt.subplots(figsize=(9, 3.8))
+        ax.plot(curve_n, theory, color=t.series[1], label="theory: expected maximum")
+        ax.plot(
+            curve_n,
+            sim_curve,
+            "o",
+            color=t.series[0],
+            mec=t.surface,
+            mew=2,
+            ms=8,
+            label="simulated best Sharpe",
+        )
+        ax.set_xscale("log")
+        ax.set_xticks(curve_n, [f"{n:,}" for n in curve_n])
+        ax.minorticks_off()
+        ax.axhline(0, color=t.baseline, lw=1)
+        end_label(ax, curve_n[-1], sim_curve[-1], f"{sim_curve[-1]:.2f}", t, dx=8)
+        ax.set(
+            xlabel="number of no-skill strategies tried (log scale)",
+            ylabel="best annualised Sharpe",
+        )
+        legend_top(ax, 1, t, loc="upper left")
+        chart_title(
+            ax,
+            "Try enough strategies and noise looks like skill",
+            "Best in-sample Sharpe among strategies with zero true edge, 10 years each",
+            t,
+        )
+        return fig
+
+    save_light_dark(draw, _fig(out, "max_sharpe_vs_trials.png"))
     return table, ma
 
 
@@ -278,7 +349,7 @@ uses data where the right answer is known.
         )
     }
 
-![half-life]({fig}/half_life_bias.png)
+{picture_md(f"{fig}/half_life_bias.png", "half-life")}
 
 OLS on an AR(1) is biased towards faster mean reversion (Kendall 1954). With one year of data
 the median estimate is {hl.loc["250 days", "median estimate"]:.1f} days for a true 10, and the
@@ -309,7 +380,7 @@ a true random walk far too often; the robust z* (used in Pillar 2) stays close t
 
 {md_table(var, "{:.1%}")}
 
-![var]({fig}/var_breach_rates.png)
+{picture_md(f"{fig}/var_breach_rates.png", "var")}
 
 Knowing the true volatility and tail shape gives the right breach rate. A normal quantile on
 Student-t returns under-reserves, and a slow historical window reacts late to volatility
@@ -319,7 +390,7 @@ clusters. Pillar 9 extends this with conditional-coverage tests and Expected Sho
 
 {md_table(ofit, "{:.2f}")}
 
-![max sharpe]({fig}/max_sharpe_vs_trials.png)
+{picture_md(f"{fig}/max_sharpe_vs_trials.png", "max sharpe")}
 
 Trying more strategies on noise mechanically raises the best Sharpe ratio, closely matching the
 Bailey & Lopez de Prado formula. A grid of {ma["grid"]} moving-average crossover rules
