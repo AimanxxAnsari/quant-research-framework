@@ -26,3 +26,6 @@ wheels/
 .DS_Store
 .idea/
 .vscode/
+
+# Private notes folder, never committed
+/local-brain/
