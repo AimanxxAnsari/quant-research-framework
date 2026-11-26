@@ -117,3 +117,14 @@ rule, grid or test was changed after that.
    class, each on its own evaluation period, using per-day Sharpe ratios.
 5. **Walk-forward length.** "First 5 years" in H5 means the first 1,260 trading days of the
    asset's evaluation period; each test step is 252 trading days.
+
+### 2026-11-26: additions made after seeing the development results
+These add information; they do not change any pre-registered test or decision rule.
+
+1. **DSR with the raw trial count.** The effective number of trials (participation ratio)
+   counted 2,013 ETF trials as about 12 and 351 currency trials as about 15, which is generous
+   to the best trial. The DSR is also reported with N = the raw trial count, labelled as a
+   sensitivity check.
+2. **Buy-and-hold per asset.** The per-asset table adds the buy-and-hold CAGR over the
+   evaluation period and the share of trials beating the benchmark, to show whether positive
+   active returns come from timing or from avoiding an asset that lost money.
