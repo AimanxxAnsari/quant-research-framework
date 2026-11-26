@@ -17,7 +17,7 @@ and regime models. Every number is meant to be traceable to raw data, code and a
 | 0 | Data foundation: collectors, immutable raw store, clean tables, quality checks | Built |
 | 2 | Returns, volatility estimators, distributions, correlation and non-synchronous data, variance ratio, Hurst | Built |
 | 3 | Energy futures: contract mapping, roll engine, curves, convenience yield, Schwartz-Smith | Planned |
-| 4 | Backtesting engine, costs, walk-forward, purged CV, Deflated Sharpe, PBO | In progress: two engines built and cross-checked ([design](docs/design/backtester.md)) |
+| 4 | Backtesting engine, costs, walk-forward, purged CV, Deflated Sharpe, PBO | In progress: engines and validation tools built and tested ([design](docs/design/backtester.md)); study next |
 | 5 | Synthetic data and known-answer tests: how often methods fool you | Built |
 | 6 | Pairs, cointegration, Kalman hedge ratios, PCA statistical arbitrage | Planned |
 | 7 | Trend, carry, cross-sectional momentum, FX forward-premium regression | Planned |
