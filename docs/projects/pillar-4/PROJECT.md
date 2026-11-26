@@ -29,6 +29,13 @@ development period: no trial beats its benchmark after allowing for the search (
 BHY), neither class's best trial clears the Deflated Sharpe bar, and the rules that "beat"
 buy-and-hold on ETFs are mostly the ones applied to ETFs that lost money.
 
+The holdout (December 2021 to November 2026) was opened once and published unchanged (tag
+`pillar4-holdout-opened`); re-running on the full history reproduced the development returns
+exactly. The ten best development trials were all on UNG, a decaying natural-gas ETF, and most
+stayed ahead of holding it: consistent with "avoid the losing ETF", not with timing skill.
+Re-picking the best rule each year beat the benchmark for only a minority of ETFs (see the
+README's Holdout section for the generated numbers).
+
 ## What went wrong and how I found it
 - A first planted look-ahead bug earned almost nothing, because the one-day fill lag moved the
   position past the return it peeked at. The fix made the test stronger, and it is a useful
@@ -52,5 +59,5 @@ buy-and-hold on ETFs are mostly the ones applied to ETFs that lost money.
 - Survivorship: the ETFs are ones that still exist today.
 
 ## Next steps
-- Open the holdout once and publish it unchanged.
 - Pillar 6 and 7 strategies run through the same engines, trial log and tests.
+- A no-trade band, a borrow spread and measured spreads, each added to both engines.

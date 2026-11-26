@@ -128,3 +128,9 @@ These add information; they do not change any pre-registered test or decision ru
 2. **Buy-and-hold per asset.** The per-asset table adds the buy-and-hold CAGR over the
    evaluation period and the share of trials beating the benchmark, to show whether positive
    active returns come from timing or from avoiding an asset that lost money.
+
+### 2026-11-26: presentation changes after the holdout was opened
+The holdout results were committed exactly as generated (tag `pillar4-holdout-opened`).
+Afterwards, regenerated from the same saved files without re-running anything: the holdout
+chart's legend was moved off a data point, "to within 0e+00" now reads "exactly", and the
+text states how many assets the forwarded trials are on (all ten are on UNG).
