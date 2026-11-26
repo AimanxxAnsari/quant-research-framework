@@ -1,0 +1,119 @@
+,max relative NAV gap
+"AUD|MA crossover|fast=5,slow=100",1.0547118733938987e-14
+"CAD|Bollinger bands|n=20,k=1.5",2.4424906541753444e-14
+"CAD|MACD|fast=5,slow=35,signal_span=5",4.807265696626928e-14
+"CHF|MA crossover|fast=10,slow=200",2.964295475749168e-14
+"CHF|MA crossover|fast=10,slow=50",4.263256414560601e-14
+CHF|channel breakout|n=200,2.4868995751603507e-14
+"CPER|Awesome Oscillator|fast=5,slow=34",5.10702591327572e-15
+"CPER|Dual Thrust (daily)|n=5,k=0.3",5.329070518200751e-15
+CPER|price vs MA|n=200,4.218847493575595e-15
+"CPER|shooting star|ratio=3,hold_days=10",4.218847493575595e-15
+"CPER|shooting star|ratio=3,hold_days=20",3.774758283725532e-15
+DBA|channel breakout|n=50,4.218847493575595e-15
+DBC|Heikin-Ashi|k=1,4.6629367034256575e-15
+"DBC|MA crossover|fast=10,slow=50",6.8833827526759706e-15
+"DBC|MA crossover|fast=20,slow=50",9.325873406851315e-15
+"EEM|Dual Thrust (daily)|n=10,k=0.3",6.217248937900877e-15
+EEM|channel breakout|n=50,4.551914400963142e-15
+"EEM|shooting star|ratio=3,hold_days=10",4.440892098500626e-15
+EEM|time-series momentum|lookback=21,8.548717289613705e-15
+"EFA|MA crossover|fast=5,slow=200",1.4210854715202004e-14
+EFA|time-series momentum|lookback=126,3.774758283725532e-15
+"EUR|MA crossover|fast=20,slow=100",1.4432899320127035e-14
+"EUR|MA crossover|fast=5,slow=200",5.995204332975845e-15
+"EUR|RSI|period=14,lower=20,upper=80",1.2323475573339238e-14
+EWA|Heikin-Ashi|k=3,6.8833827526759706e-15
+"EWA|RSI|period=7,lower=30,upper=70",5.995204332975845e-15
+EWC|stochastic oscillator|n=21,7.327471962526033e-15
+"EWJ|Bollinger bands|n=20,k=2.5",9.769962616701378e-15
+"EWJ|Bollinger bands|n=50,k=1.5",4.6629367034256575e-15
+"EWJ|MA crossover|fast=50,slow=100",2.4424906541753444e-15
+EWJ|price vs MA|n=200,7.438494264988549e-15
+"FXE|MA crossover|fast=5,slow=50",6.217248937900877e-15
+"GBP|Bollinger bands|n=50,k=1.5",6.439293542825908e-15
+"GDX|MA crossover|fast=10,slow=50",4.884981308350689e-15
+"GLD|Bollinger bands|n=50,k=1.5",3.4416913763379853e-15
+"GLD|Dual Thrust (daily)|n=10,k=0.3",1.1213252548714081e-14
+"GLD|MA crossover|fast=5,slow=50",4.6629367034256575e-15
+"GLD|Parabolic SAR|step=0.04,max_af=0.4",7.993605777301127e-15
+"GLD|shooting star|ratio=2,hold_days=5",1.0880185641326534e-14
+"HYG|MACD|fast=8,slow=17,signal_span=9",8.215650382226158e-15
+"HYG|Parabolic SAR|step=0.02,max_af=0.2",1.1546319456101628e-14
+"HYG|RSI|period=14,lower=30,upper=70",5.995204332975845e-15
+HYG|channel breakout|n=50,1.021405182655144e-14
+HYG|filter rule|x=0.05,7.105427357601002e-15
+"IEF|Dual Thrust (daily)|n=5,k=0.5",9.103828801926284e-15
+"IEF|MA crossover|fast=20,slow=100",4.440892098500626e-15
+"IEF|MA crossover|fast=5,slow=50",4.440892098500626e-15
+"IEF|MA crossover|fast=50,slow=100",4.218847493575595e-15
+"IWM|Dual Thrust (daily)|n=10,k=0.5",7.771561172376096e-15
+IWM|stochastic oscillator|n=21,7.771561172376096e-15
+JPY|time-series momentum|lookback=126,1.4765966227514582e-14
+JPY|time-series momentum|lookback=252,4.196643033083092e-14
+"LQD|MA crossover|fast=10,slow=200",2.9976021664879227e-15
+"LQD|MACD|fast=12,slow=26,signal_span=9",1.0103029524088925e-14
+"NOK|RSI|period=14,lower=20,upper=80",7.882583474838611e-15
+"NZD|RSI|period=7,lower=30,upper=70",1.509903313490213e-14
+QQQ|filter rule|x=0.02,8.104628079763643e-15
+QQQ|filter rule|x=0.05,6.8833827526759706e-15
+"RSP|MACD|fast=12,slow=26,signal_span=9",2.4424906541753444e-15
+"RSP|Parabolic SAR|step=0.01,max_af=0.1",4.884981308350689e-15
+SHY|Heikin-Ashi|k=3,4.6629367034256575e-15
+"SHY|MA crossover|fast=10,slow=200",6.217248937900877e-15
+SHY|price vs MA|n=200,8.659739592076221e-15
+"SLV|Dual Thrust (daily)|n=10,k=0.3",5.773159728050814e-15
+"SLV|MA crossover|fast=10,slow=50",6.439293542825908e-15
+"SLV|MA crossover|fast=5,slow=200",2.3314683517128287e-15
+"SLV|RSI|period=14,lower=30,upper=70",1.4210854715202004e-14
+SLV|price vs MA|n=200,3.3306690738754696e-15
+"SPY|MA crossover|fast=10,slow=100",1.1324274851176597e-14
+"SPY|MA crossover|fast=50,slow=100",7.549516567451064e-15
+"SPY|RSI|period=7,lower=30,upper=70",4.9960036108132044e-15
+SPY|stochastic oscillator|n=14,9.769962616701378e-15
+TIP|Heikin-Ashi|k=1,7.993605777301127e-15
+"TIP|MA crossover|fast=5,slow=200",5.662137425588298e-15
+"TLT|Bollinger bands|n=50,k=1.5",6.661338147750939e-15
+"TLT|RSI|period=14,lower=20,upper=80",5.10702591327572e-15
+TLT|channel breakout|n=50,6.5503158452884236e-15
+TLT|filter rule|x=0.1,5.10702591327572e-15
+TLT|price vs MA|n=100,3.9968028886505635e-15
+"UNG|MA crossover|fast=10,slow=100",5.662137425588298e-15
+"USO|Bollinger bands|n=20,k=2",3.1086244689504383e-15
+USO|Heikin-Ashi|k=3,3.1086244689504383e-15
+"USO|MA crossover|fast=10,slow=200",3.552713678800501e-15
+"USO|MA crossover|fast=20,slow=100",5.995204332975845e-15
+"USO|shooting star|ratio=2,hold_days=20",5.329070518200751e-15
+UUP|price vs MA|n=100,3.774758283725532e-15
+"UUP|shooting star|ratio=3,hold_days=10",5.10702591327572e-15
+UUP|time-series momentum|lookback=63,7.549516567451064e-15
+"VGK|Dual Thrust (daily)|n=10,k=0.7",5.10702591327572e-15
+"VGK|Dual Thrust (daily)|n=5,k=0.3",5.551115123125783e-15
+"VGK|MACD|fast=5,slow=35,signal_span=5",5.773159728050814e-15
+"XLE|MA crossover|fast=50,slow=200",4.440892098500626e-15
+"XLE|RSI|period=14,lower=30,upper=70",8.992806499463768e-15
+XLE|time-series momentum|lookback=126,6.5503158452884236e-15
+"XLF|MA crossover|fast=10,slow=100",9.769962616701378e-15
+XLF|filter rule|x=0.05,6.772360450213455e-15
+XLF|stochastic oscillator|n=21,9.992007221626409e-15
+"XLI|Awesome Oscillator|fast=10,slow=50",4.6629367034256575e-15
+"XLI|MA crossover|fast=20,slow=100",9.325873406851315e-15
+"XLI|MA crossover|fast=50,slow=200",7.105427357601002e-15
+"XLI|MACD|fast=12,slow=26,signal_span=9",5.995204332975845e-15
+"XLI|MACD|fast=5,slow=35,signal_span=5",7.438494264988549e-15
+XLI|price vs MA|n=100,4.218847493575595e-15
+"XLI|shooting star|ratio=3,hold_days=10",4.773959005888173e-15
+XLI|time-series momentum|lookback=21,6.217248937900877e-15
+"XLK|MA crossover|fast=50,slow=200",1.3433698597964394e-14
+"XLK|Parabolic SAR|step=0.04,max_af=0.4",7.771561172376096e-15
+XLK|filter rule|x=0.05,4.218847493575595e-15
+"XLP|Bollinger bands|n=20,k=2.5",1.176836406102666e-14
+XLP|Heikin-Ashi|k=3,5.10702591327572e-15
+XLP|stochastic oscillator|n=14,1.9206858326015208e-14
+XLU|filter rule|x=0.05,1.3988810110276972e-14
+"XLV|Awesome Oscillator|fast=10,slow=50",6.8833827526759706e-15
+XLV|Heikin-Ashi|k=1,5.10702591327572e-15
+"XLV|MA crossover|fast=20,slow=100",4.6629367034256575e-15
+"XLV|MA crossover|fast=20,slow=50",7.105427357601002e-15
+"XLV|RSI|period=7,lower=30,upper=70",1.4432899320127035e-14
+"XLV|shooting star|ratio=3,hold_days=5",4.440892098500626e-15

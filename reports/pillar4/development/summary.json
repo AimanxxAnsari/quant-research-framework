@@ -1,0 +1,79 @@
+{
+  "period_end": "2021-11-30",
+  "trials": 2364,
+  "h1_h2": {
+    "etf": {
+      "start": "2012-11-19",
+      "end": "2021-11-30",
+      "trials": 2013,
+      "spa_p": 0.979,
+      "reality_check_p": 0.986,
+      "stepm_survivors": []
+    },
+    "fx": {
+      "start": "2000-01-04",
+      "end": "2021-11-30",
+      "trials": 351,
+      "spa_p": 0.297,
+      "reality_check_p": 0.297,
+      "stepm_survivors": []
+    },
+    "all": {
+      "start": "2012-11-19",
+      "end": "2021-11-30",
+      "trials": 2364,
+      "spa_p": 0.947,
+      "reality_check_p": 0.961,
+      "stepm_survivors": []
+    },
+    "bhy_survivors": []
+  },
+  "h3": {
+    "etf": {
+      "best": "UNG|RSI|period=14,lower=30,upper=70",
+      "annual_sharpe": 0.6549674934555307,
+      "trials": 2013,
+      "effective_trials": 12.473745707605623,
+      "threshold_annual": 0.4864669064386009,
+      "dsr": 0.7312126235775279,
+      "passes": false,
+      "dsr_all_trials": 0.10564782675616097
+    },
+    "fx": {
+      "best": "NZD|filter rule|x=0.05",
+      "annual_sharpe": 0.4883893677798049,
+      "trials": 351,
+      "effective_trials": 14.561999786053745,
+      "threshold_annual": 0.3410032784199523,
+      "dsr": 0.8499018439131873,
+      "passes": false,
+      "dsr_all_trials": 0.2795019669214741
+    }
+  },
+  "h6": {
+    "next_open x0": {
+      "etf": 0.18181818181818182,
+      "fx": 0.6780626780626781
+    },
+    "next_open x1": {
+      "etf": 0.16393442622950818,
+      "fx": 0.6581196581196581
+    },
+    "next_open x2": {
+      "etf": 0.15350223546944858,
+      "fx": 0.6267806267806267
+    },
+    "next_open x3": {
+      "etf": 0.14505712866368603,
+      "fx": 0.5897435897435898
+    },
+    "next_close x1": {
+      "etf": 0.17486338797814208,
+      "fx": 0.6581196581196581
+    }
+  },
+  "engine_check": {
+    "trials": 118,
+    "max_gap": 4.807265696626928e-14
+  }
+}
