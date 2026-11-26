@@ -28,6 +28,10 @@ def inject_file(path: Path, name: str, block: str) -> None:
     path.write_text(inject(path.read_text(), name, block))
 
 
+def _escape(text: str) -> str:
+    return text.replace("|", "\\|")  # a bare pipe would start a new column
+
+
 def md_table(df: pd.DataFrame, floatfmt: str | dict[str, str] = "{:.3f}") -> str:
     """Minimal Markdown table. ``floatfmt`` is one format or a dict column -> format."""
     cols = [str(c) for c in df.columns]
@@ -39,8 +43,8 @@ def md_table(df: pd.DataFrame, floatfmt: str | dict[str, str] = "{:.3f}") -> str
         cells = []
         for c, v in zip(df.columns, row, strict=True):
             fmt = floatfmt.get(c, "{:.3f}") if isinstance(floatfmt, dict) else floatfmt
-            cells.append(fmt.format(v) if isinstance(v, float) else str(v))
-        lines.append("| " + " | ".join([str(idx), *cells]) + " |")
+            cells.append(fmt.format(v) if isinstance(v, float) else _escape(str(v)))
+        lines.append("| " + " | ".join([_escape(str(idx)), *cells]) + " |")
     return "\n".join(lines)
 
 

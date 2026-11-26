@@ -257,6 +257,14 @@ def commentary(summary: dict[str, Any], per_asset: pd.DataFrame, trials: pd.Data
         np.corrcoef(etf["buy-and-hold CAGR"], etf["share of trials beating benchmark"])[0, 1]
     )
     worst = trials.loc[str(trials[HEADLINE].idxmin())]
+    fx = trials[trials["class"] == "fx"]
+    fx_share = float((fx[HEADLINE] > 0).mean())
+    fx_med = fx.groupby("family")[HEADLINE].median()
+    fx_pos = ", ".join(fx_med[fx_med > 0].sort_values(ascending=False).index)
+    fx_p = summary["h1_h2"]["fx"]["spa_p"]
+    fx_verdict = (
+        "within what the search alone produces" if fx_p >= 0.05 else "more than the search explains"
+    )
     loser_names = ", ".join(map(str, losers.index))
     if winners_share > others_share:
         where = (
@@ -282,6 +290,9 @@ The best currency trial, `{h3["fx"]["best"]}`, reaches {h3["fx"]["annual_sharpe"
 correlation of {corr:.2f} with the ETF's own buy-and-hold return. The {len(losers)} ETFs that
 lost money when held ({loser_names}) see {winners_share:.0%} of their rules beat them, against
 {others_share:.0%} for the rest: {where}
+
+**Currencies.** {fx_share:.0%} of currency trials beat cash, and the families with a positive
+median are {fx_pos}. But the SPA p-value for currencies is {fx_p:.2f}: {fx_verdict}.
 
 **Costs.** The worst trial, `{worst.name}`, has an active Sharpe of {worst[HEADLINE]:.2f} with
 costs and {worst["next_open x0"]:.2f} without; {costs}
