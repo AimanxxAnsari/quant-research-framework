@@ -19,6 +19,7 @@ from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from cycler import cycler
 from matplotlib.colors import LinearSegmentedColormap
 
 
@@ -90,7 +91,7 @@ def rc(t: Theme) -> dict:
         "axes.grid": True,
         "axes.grid.axis": "y",
         "axes.axisbelow": True,
-        "axes.prop_cycle": mpl.cycler(color=list(t.series)),
+        "axes.prop_cycle": cycler(color=list(t.series)),
         "grid.color": t.grid,
         "grid.linewidth": 0.8,
         "grid.linestyle": "-",

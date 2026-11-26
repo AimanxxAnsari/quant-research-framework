@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 
 
-def beta(y: pd.Series, x: pd.Series) -> dict:
+def beta(y: pd.Series, x: pd.Series) -> dict[str, float | int]:
     """OLS slope of y on x with intercept, standard error and R^2."""
     df = pd.concat([y, x], axis=1, keys=["y", "x"]).dropna()
     xv = df["x"].to_numpy()

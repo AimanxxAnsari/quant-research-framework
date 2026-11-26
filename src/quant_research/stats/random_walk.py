@@ -25,6 +25,8 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
+from quant_research.errors import InvalidParameterError
+
 LO_95_INTERVAL = (0.809, 1.862)
 
 
@@ -41,7 +43,7 @@ def variance_ratio(returns: pd.Series | np.ndarray, q: int) -> VarianceRatio:
     r = np.asarray(pd.Series(returns).dropna(), dtype=float)
     T = r.size
     if q < 2 or q >= T:
-        raise ValueError("need 2 <= q < number of returns")
+        raise InvalidParameterError("need 2 <= q < number of returns")
     mu = r.mean()
     d = r - mu
     var_a = (d @ d) / (T - 1)
@@ -56,7 +58,7 @@ def variance_ratio(returns: pd.Series | np.ndarray, q: int) -> VarianceRatio:
     denom = (d2.sum()) ** 2
     theta = 0.0
     for j in range(1, q):
-        delta = T * (d2[j:] @ d2[:-j]) / denom
+        delta = float(T * (d2[j:] @ d2[:-j]) / denom)
         theta += (2 * (q - j) / q) ** 2 * delta
     z_star = (vr - 1) / np.sqrt(theta / T)  # theta is the asymptotic variance of sqrt(T)(VR-1)
     return VarianceRatio(
@@ -96,7 +98,9 @@ def hurst_shuffled_baseline(
     return float(np.mean(hs)), float(np.std(hs, ddof=1))
 
 
-def lo_modified_rs(returns: pd.Series | np.ndarray, q: int | None = None) -> dict:
+def lo_modified_rs(
+    returns: pd.Series | np.ndarray, q: int | None = None
+) -> dict[str, float | int | bool]:
     """Lo (1991) modified R/S statistic V with Andrews (1991) automatic bandwidth."""
     x = np.asarray(pd.Series(returns).dropna(), dtype=float)
     T = x.size

@@ -7,7 +7,7 @@ import pandas as pd
 from scipy import stats
 
 
-def describe(returns: pd.Series, periods_per_year: int = 252) -> dict:
+def describe(returns: pd.Series, periods_per_year: int = 252) -> dict[str, float | int]:
     r = returns.dropna().to_numpy()
     jb = stats.jarque_bera(r)
     sd = r.std(ddof=1)

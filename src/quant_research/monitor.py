@@ -30,7 +30,7 @@ ETFS = ["SPY", "QQQ", "EFA", "EEM", "TLT", "HYG", "GLD", "USO", "UUP"]
 HORIZONS = {"1W": 5, "1M": 21, "3M": 63}
 
 
-def _changes(s: pd.Series, bp: bool) -> dict:
+def _changes(s: pd.Series, bp: bool) -> dict[str, object]:
     s = s.dropna()
     last = s.iloc[-1]
     out = {"last": last, "date": f"{s.index[-1]:%Y-%m-%d}"}
@@ -49,11 +49,11 @@ def snapshot(settings: Settings) -> str:
     fx = access.series(settings, list(FX))
     px = access.prices(settings, ETFS)
 
-    rate_tbl = pd.DataFrame({RATES[c]: _changes(rates[c], bp=True) for c in rates}).T
+    rate_tbl = pd.DataFrame({RATES[str(c)]: _changes(rates[c], bp=True) for c in rates}).T
     lvl_tbl = pd.DataFrame(
         {
-            **{LEVELS[c]: _changes(levels[c], False) for c in levels},
-            **{FX[c]: _changes(fx[c], False) for c in fx},
+            **{LEVELS[str(c)]: _changes(levels[c], False) for c in levels},
+            **{FX[str(c)]: _changes(fx[c], False) for c in fx},
         }
     ).T
     etf_rows = {}
@@ -64,11 +64,11 @@ def snapshot(settings: Settings) -> str:
         row["vol pctile"] = float((rv <= rv.iloc[-1]).mean() * 100)
         etf_rows[t] = row
     etf_tbl = pd.DataFrame(etf_rows).T
-    for t in (rate_tbl, lvl_tbl, etf_tbl):
-        t.index.name = ""
-        for c in t.columns:
+    for tbl in (rate_tbl, lvl_tbl, etf_tbl):
+        tbl.index.name = ""
+        for c in tbl.columns:
             if c not in ("date",):
-                t[c] = t[c].map(lambda v: round(float(v), 2) if pd.notna(v) else np.nan)
+                tbl[c] = tbl[c].map(lambda v: round(float(v), 2) if pd.notna(v) else np.nan)
     asof = max(rates.index.max(), px.index.max())
     return "\n".join(
         [

@@ -11,6 +11,7 @@ import duckdb
 import pandas as pd
 
 from quant_research.data.settings import Settings
+from quant_research.errors import ConfigError, DataNotFoundError, InvalidParameterError
 
 
 def _con(settings: Settings) -> duckdb.DuckDBPyConnection:
@@ -29,7 +30,7 @@ def series(settings: Settings, ids: list[str], start: str | None = None) -> pd.D
     wide = long.pivot(index="date", columns="series_id", values="value").sort_index()
     missing = sorted(set(ids) - set(wide.columns))
     if missing:
-        raise KeyError(f"series not in warehouse: {missing}")
+        raise DataNotFoundError(f"series not in warehouse: {missing}")
     return wide[ids]
 
 
@@ -39,7 +40,7 @@ def prices(
     """Wide table of one price field (default adjusted close) for the given tickers."""
     allowed = {"open", "high", "low", "close", "adj_open", "adj_high", "adj_low", "adj_close"}
     if field not in allowed:
-        raise ValueError(f"field must be one of {sorted(allowed)}")
+        raise InvalidParameterError(f"field must be one of {sorted(allowed)}")
     q = f"SELECT ticker, date, {field} AS v FROM prices WHERE ticker IN ?"
     params: list = [tickers]
     if start:
@@ -50,7 +51,7 @@ def prices(
     wide = long.pivot(index="date", columns="ticker", values="v").sort_index()
     missing = sorted(set(tickers) - set(wide.columns))
     if missing:
-        raise KeyError(f"tickers not in warehouse: {missing}")
+        raise DataNotFoundError(f"tickers not in warehouse: {missing}")
     return wide[tickers]
 
 
@@ -65,7 +66,7 @@ def ohlc(settings: Settings, ticker: str, adjusted: bool = True) -> pd.DataFrame
     with _con(settings) as con:
         df = con.execute(q, [ticker]).df()
     if df.empty:
-        raise KeyError(f"ticker not in warehouse: {ticker}")
+        raise DataNotFoundError(f"ticker not in warehouse: {ticker}")
     return df.set_index("date")
 
 
@@ -83,5 +84,5 @@ def fx_usd_per_foreign(settings: Settings, ids: list[str]) -> pd.DataFrame:
         if quote == "foreign_per_USD":
             wide[sid] = 1.0 / wide[sid]
         elif quote != "USD_per_foreign":
-            raise ValueError(f"{sid} is not an FX series with a known quote convention")
+            raise ConfigError(f"{sid} is not an FX series with a known quote convention")
     return wide

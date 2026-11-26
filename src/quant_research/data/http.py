@@ -1,4 +1,4 @@
-"""HTTP with timeouts, retries and backoff — and no secrets in logs.
+"""HTTP with timeouts, retries and backoff, and no secrets in logs.
 
 Retries transient failures (connection errors, 429, 5xx) with exponential backoff.
 Does not retry other 4xx errors: those are permission or request problems that retrying
@@ -11,6 +11,8 @@ import time
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import requests
+
+from quant_research.errors import QuantResearchError
 
 USER_AGENT = "quant-research-framework/0.1 (educational research; python-requests)"
 SECRET_PARAMS = {"api_key", "apikey", "token", "key", "access_token"}
@@ -26,8 +28,8 @@ def redact_url(url: str) -> str:
     return urlunsplit(parts._replace(query=urlencode(query)))
 
 
-class FetchError(RuntimeError):
-    pass
+class FetchError(QuantResearchError, RuntimeError):
+    """A download failed after all retries."""
 
 
 def get(

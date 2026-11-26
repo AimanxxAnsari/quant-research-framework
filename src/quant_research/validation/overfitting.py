@@ -14,12 +14,14 @@ from __future__ import annotations
 import numpy as np
 from scipy import stats
 
+from quant_research.errors import InvalidParameterError
+
 EULER_GAMMA = 0.5772156649015329
 
 
 def expected_max_sharpe(n_trials: int, sd: float = 1.0) -> float:
     if n_trials < 1:
-        raise ValueError("n_trials must be >= 1")
+        raise InvalidParameterError("n_trials must be >= 1")
     if n_trials == 1:
         return 0.0
     g = EULER_GAMMA
@@ -56,4 +58,4 @@ def ma_crossover_returns(log_prices: np.ndarray, fast: int, slow: int) -> np.nda
     signal = np.nan_to_num(signal)
     r = np.diff(p)  # r[t-1] is the return from t-1 to t
     position = signal[:-1]  # decided at close t-1, earns r over (t-1, t]
-    return position * r
+    return np.asarray(position * r, dtype=float)

@@ -14,6 +14,7 @@ import pandas as pd
 from quant_research.data.http import get
 from quant_research.data.raw_store import RawStore, Snapshot
 from quant_research.data.settings import Settings
+from quant_research.errors import DataIntegrityError
 
 SOURCE = "french"
 URL = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/{name}_CSV.zip"
@@ -48,7 +49,7 @@ def parse(payload: bytes, dataset: str) -> pd.DataFrame:
         elif rows:  # first non-data line after the daily block ends it
             break
     if header is None or not rows:
-        raise ValueError(f"could not find a daily data block in {dataset}")
+        raise DataIntegrityError(f"could not find a daily data block in {dataset}")
     df = pd.DataFrame(rows, columns=["date", *header])
     long = df.melt(id_vars="date", var_name="col", value_name="value")
     return (

@@ -6,7 +6,12 @@ Every generator takes a ``numpy.random.Generator`` so experiments are reproducib
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import numpy as np
+import numpy.typing as npt
+
+from quant_research.errors import InvalidParameterError
 
 
 def rng(seed: int | None = 0) -> np.random.Generator:
@@ -18,12 +23,12 @@ def gbm_log_prices(
 ) -> np.ndarray:
     """Exact GBM sampling: log returns ~ N((mu - sigma^2/2) dt, sigma^2 dt)."""
     steps = r.normal((mu - 0.5 * sigma**2) * dt, sigma * np.sqrt(dt), n)
-    return np.log(s0) + np.concatenate([[0.0], np.cumsum(steps)])
+    return np.asarray(np.log(s0) + np.concatenate([[0.0], np.cumsum(steps)]), dtype=float)
 
 
 def phi_from_half_life(half_life: float) -> float:
     """AR(1) coefficient whose deviations halve every ``half_life`` steps: phi^h = 1/2."""
-    return 0.5 ** (1.0 / half_life)
+    return float(0.5 ** (1.0 / half_life))
 
 
 def ou(
@@ -62,7 +67,7 @@ def garch11(
     Unconditional variance omega / (1 - alpha - beta).
     """
     if alpha + beta >= 1:
-        raise ValueError("need alpha + beta < 1 for a stationary process")
+        raise InvalidParameterError("need alpha + beta < 1 for a stationary process")
     total = n + burn
     if nu is None:
         z = r.normal(0, 1, total)
@@ -101,20 +106,20 @@ def independent_random_walks(
     return np.cumsum(r.normal(0, sigma, (n, k)), axis=0)
 
 
-def stationary_distribution(transition) -> np.ndarray:
+def stationary_distribution(transition: npt.ArrayLike) -> np.ndarray:
     """pi with pi P = pi: the long-run share of time spent in each state."""
     P = np.asarray(transition, dtype=float)
     evals, evecs = np.linalg.eig(P.T)
     pi = np.real(evecs[:, np.argmin(np.abs(evals - 1))])
-    return pi / pi.sum()
+    return np.asarray(pi / pi.sum(), dtype=float)
 
 
 def regime_switching(
     n: int,
     r: np.random.Generator,
-    means=(0.0005, -0.001),
-    vols=(0.007, 0.02),
-    transition=((0.99, 0.01), (0.03, 0.97)),
+    means: Sequence[float] = (0.0005, -0.001),
+    vols: Sequence[float] = (0.007, 0.02),
+    transition: npt.ArrayLike = ((0.99, 0.01), (0.03, 0.97)),
 ) -> tuple[np.ndarray, np.ndarray]:
     """Returns from a hidden Markov chain with state-dependent mean and volatility.
     Row i of ``transition`` holds the probabilities of moving from state i to each state."""

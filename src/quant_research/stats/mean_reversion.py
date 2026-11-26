@@ -12,11 +12,13 @@ residual unit-root test is valid.
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 from statsmodels.tsa.stattools import coint
 
 
-def ar1_fit(x: np.ndarray) -> dict:
+def ar1_fit(x: np.ndarray) -> dict[str, float]:
     x = np.asarray(x, dtype=float)
     y, lag = x[1:], x[:-1]
     X = np.column_stack([np.ones_like(lag), lag])
@@ -26,7 +28,7 @@ def ar1_fit(x: np.ndarray) -> dict:
     return {"c": float(coef[0]), "phi": phi, "half_life": hl}
 
 
-def ols_levels(y: np.ndarray, x: np.ndarray) -> dict:
+def ols_levels(y: np.ndarray, x: np.ndarray) -> dict[str, float]:
     """Levels regression y = a + b x: slope, its naive t-statistic and R^2 (spurious if both
     series are independent random walks)."""
     X = np.column_stack([np.ones_like(x), x])
@@ -40,7 +42,7 @@ def ols_levels(y: np.ndarray, x: np.ndarray) -> dict:
     return {"beta": float(coef[1]), "t": float(coef[1] / se_b), "r2": float(r2)}
 
 
-def engle_granger(y: np.ndarray, x: np.ndarray) -> dict:
+def engle_granger(y: np.ndarray, x: np.ndarray) -> dict[str, Any]:
     """Engle-Granger test (statsmodels ``coint``, constant trend) plus the levels hedge ratio."""
     stat, p, _ = coint(y, x, trend="c", autolag=None, maxlag=1)
     return {"t_stat": float(stat), "p_value": float(p), "beta": ols_levels(y, x)["beta"]}

@@ -25,6 +25,12 @@ dev = [
     "pytest>=8.0",
     "hypothesis>=6.100",
     "ruff>=0.6",
+    "mypy>=2.4.1",
+    "pandas-stubs>=3.1.0.261029",
+    "types-pyyaml>=6.0.12.20261122",
+    "types-requests>=2.33.0.20261030",
+    "pre-commit>=4.7.0",
+    "scipy-stubs>=1.18.1.1",
 ]
 
 [build-system]
@@ -37,6 +43,41 @@ module-name = "quant_research"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+
+[tool.mypy]
+python_version = "3.12"
+files = ["src"]
+warn_unused_ignores = true
+warn_redundant_casts = true
+
+# statsmodels, arch and vectorbt ship without type information.
+[[tool.mypy.overrides]]
+module = ["statsmodels.*", "arch.*", "vectorbt.*"]
+ignore_missing_imports = true
+
+# Core maths is checked strictly (ADR-0007). Plumbing, studies and plotting use standard mode.
+[[tool.mypy.overrides]]
+module = [
+    "quant_research.errors",
+    "quant_research._typing",
+    "quant_research.stats.*",
+    "quant_research.risk.*",
+    "quant_research.validation.*",
+    "quant_research.backtest.*",
+]
+# The strict flags are listed one by one: `strict = true` inside an override leaks to every
+# module in mypy 2.x.
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+extra_checks = true
+no_implicit_reexport = true
+strict_equality = true
+warn_return_any = true
 
 [tool.ruff]
 line-length = 100

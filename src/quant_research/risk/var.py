@@ -38,7 +38,7 @@ def breaches(returns: np.ndarray, var: np.ndarray) -> np.ndarray:
     return (np.asarray(returns)[mask] < -var[mask]).astype(int)
 
 
-def kupiec_pof(n_breaches: int, n_obs: int, level: float = 0.99) -> dict:
+def kupiec_pof(n_breaches: int, n_obs: int, level: float = 0.99) -> dict[str, float]:
     """Kupiec (1995) LR test that the breach rate equals 1 - level (chi-square, 1 df)."""
     p = 1 - level
     x, T = n_breaches, n_obs

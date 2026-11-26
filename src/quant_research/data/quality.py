@@ -70,9 +70,11 @@ def check_observations(
     nan = obs["value"].isna().sum()
     rows.append(_row("observations", "missing", "value", nan == 0, f"{nan} missing values"))
 
-    meta = series.set_index("series_id")
-    for sid, g in obs.groupby("series_id", sort=True):
-        ac = meta.loc[sid, "asset_class"] if sid in meta.index else None
+    asset_class = dict(zip(series["series_id"], series["asset_class"], strict=True))
+    frequency = dict(zip(series["series_id"], series["frequency"], strict=True))
+    for key, g in obs.groupby("series_id", sort=True):
+        sid = str(key)
+        ac = asset_class.get(sid) or ""
         lo, hi = MACRO_RANGES.get(sid) or RANGES.get(ac, (float("-inf"), float("inf")))
         bad = g[(g["value"] < lo) | (g["value"] > hi)]
         if len(bad):
@@ -87,7 +89,7 @@ def check_observations(
                     f"{first['value']} on {first['date']:%Y-%m-%d}",
                 )
             )
-        freq = meta.loc[sid, "frequency"] if sid in meta.index else "daily"
+        freq = frequency.get(sid) or "daily"
         age = (pd.Timestamp(as_of) - g["date"].max()).days
         limit = STALE_DAYS.get(freq, 10)
         if age > limit:

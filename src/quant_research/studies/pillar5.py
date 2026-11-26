@@ -25,7 +25,7 @@ from quant_research.plotting import (  # noqa: E402
     save_light_dark,
 )
 from quant_research.plotting import title as chart_title  # noqa: E402
-from quant_research.reporting import inject_file, md_table  # noqa: E402
+from quant_research.reporting import cell, inject_file, md_table  # noqa: E402
 from quant_research.risk.var import breaches, ewma_normal_var, historical_var, kupiec_pof  # noqa: E402
 from quant_research.stats.mean_reversion import ar1_fit, engle_granger, ols_levels  # noqa: E402
 from quant_research.stats.random_walk import variance_ratio  # noqa: E402
@@ -143,12 +143,12 @@ def variance_ratio_size_study(reps: int = 500, n: int = 1000) -> dict:
 
 
 def var_study(out: Path, reps: int = 100, n: int = 2500) -> pd.DataFrame:
-    methods = {
+    methods: dict[str, list[float]] = {
         "true conditional vol (t quantile)": [],
         "EWMA + normal quantile": [],
         "historical 250-day": [],
     }
-    kupiec_rej = {k: [] for k in methods}
+    kupiec_rej: dict[str, list[bool]] = {k: [] for k in methods}
     nu = 5.0
     q_t = stats.t.ppf(0.99, nu) * np.sqrt((nu - 2) / nu)  # standardised-t 99% quantile
     for s in range(reps):
@@ -174,8 +174,9 @@ def var_study(out: Path, reps: int = 100, n: int = 2500) -> pd.DataFrame:
     def draw(t: Theme):
         fig, ax = plt.subplots(figsize=(9, 3.0))
         y = np.arange(len(rates))[::-1]
-        ax.barh(y, rates.values, height=0.42, color=t.series[0])
-        for yi, v in zip(y, rates.values, strict=True):
+        values = rates.to_numpy(dtype=float)
+        ax.barh(y, values, height=0.42, color=t.series[0])
+        for yi, v in zip(y, values, strict=True):
             ax.annotate(
                 f"{v:.1%}",
                 (v, yi),
@@ -316,12 +317,12 @@ def run(settings: Settings) -> str:
             (
                 "Half-life estimate, 250 days, true 10",
                 "10.0",
-                f"{hl.loc['250 days', 'median estimate']:.1f} (median)",
+                f"{cell(hl, '250 days', 'median estimate'):.1f} (median)",
             ),
             (
                 "Best of 100 no-skill strategies, 10y Sharpe",
                 "0.00",
-                f"{ofit.loc['100 strategies', 'best in-sample Sharpe (simulated)']:.2f}",
+                f"{cell(ofit, '100 strategies', 'best in-sample Sharpe (simulated)'):.2f}",
             ),
         ],
         columns=["test or estimator", "truth / nominal", "measured"],
@@ -352,8 +353,9 @@ uses data where the right answer is known.
 {picture_md(f"{fig}/half_life_bias.png", "half-life")}
 
 OLS on an AR(1) is biased towards faster mean reversion (Kendall 1954). With one year of data
-the median estimate is {hl.loc["250 days", "median estimate"]:.1f} days for a true 10, and the
-90% range spans {hl.loc["250 days", "5th pct"]:.1f} to {hl.loc["250 days", "95th pct"]:.1f} days.
+the median estimate is {cell(hl, "250 days", "median estimate"):.1f} days for a true 10, and the
+90% range spans {cell(hl, "250 days", "5th pct"):.1f} to {
+        cell(hl, "250 days", "95th pct"):.1f} days.
 
 ### Cointegration: spurious relationships and screening
 

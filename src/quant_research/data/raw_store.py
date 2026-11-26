@@ -20,6 +20,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from quant_research.data.http import redact_url
+from quant_research.errors import DataIntegrityError
 
 
 @dataclass(frozen=True)
@@ -109,5 +110,5 @@ class RawStore:
     def read(self, snap: Snapshot) -> bytes:
         data = (self.root / snap.path).read_bytes()
         if hashlib.sha256(data).hexdigest() != snap.sha256:
-            raise ValueError(f"checksum mismatch for raw snapshot {snap.path}")
+            raise DataIntegrityError(f"checksum mismatch for raw snapshot {snap.path}")
         return data

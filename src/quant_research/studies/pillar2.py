@@ -25,7 +25,7 @@ from quant_research.plotting import (  # noqa: E402
     save_light_dark,
 )
 from quant_research.plotting import title as chart_title  # noqa: E402
-from quant_research.reporting import inject_file, md_table  # noqa: E402
+from quant_research.reporting import cell, inject_file, md_table  # noqa: E402
 from quant_research.stats import dependence as dep  # noqa: E402
 from quant_research.stats import distribution  # noqa: E402
 from quant_research.stats import random_walk as rw  # noqa: E402
@@ -141,7 +141,7 @@ def nonsynchronous(settings: Settings, out: Path) -> pd.DataFrame:
     def draw(t: Theme):
         fig, ax = plt.subplots(figsize=(8, 3.6))
         colors = [t.series[0] if k in (0, 1) else t.muted for k in ll.index]
-        ax.bar(ll.index, ll.values, width=0.45, color=colors)
+        ax.bar(ll.index, ll.to_numpy(dtype=float), width=0.45, color=colors)
         ax.axhline(0, color=t.baseline, lw=1)
         ax.set_ylim(top=ll.max() * 1.25)
         for k in (0, 1):
@@ -308,6 +308,8 @@ def run(settings: Settings) -> str:
     sig_assets = sorted({i for i, _ in sig_cells})
     lo_rejects = [i for i in hu.index if hu.loc[i, "Lo rejects no long memory"] == "yes"]
 
+    stock_bond_full = cell(corr_full, "SPY", "TLT")
+    stock_bond_last = cell(corr_last, "SPY", "TLT")
     block = f"""
 Data through {obs:%Y-%m-%d}. Regenerate with `uv run qrf study pillar2`.
 
@@ -385,8 +387,8 @@ evidence of long memory.
 
 {picture_md(f"{fig}/correlation_matrix.png", "correlation")}
 
-Stock-bond correlation (SPY vs TLT, weekly): {corr_full.loc["SPY", "TLT"]:.2f} over the full sample
-vs {corr_last.loc["SPY", "TLT"]:.2f} in the last 12 months. Correlations are unstable; a hedge
+Stock-bond correlation (SPY vs TLT, weekly): {stock_bond_full:.2f} over the full sample
+vs {stock_bond_last:.2f} in the last 12 months. Correlations are unstable; a hedge
 that worked historically can stop working, which is why later pillars estimate them on rolling
 windows and stress them.
 """
