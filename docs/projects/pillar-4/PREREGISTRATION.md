@@ -1,6 +1,6 @@
 # Pre-registration: popular trading rules after overfitting correction
 
-**Status:** draft for review, not yet tagged. Once approved this file is committed and tagged
+**Status:** approved 2026-11-26 and tagged
 `pillar4-preregistration`, before any study result exists. Any later change is a new, dated
 section at the end; nothing above it is edited.
 
