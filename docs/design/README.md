@@ -10,6 +10,7 @@ Design docs describe how each component works. Decision records (in
 | Collectors, raw store, clean tables, quality checks | [data-foundation.md](data-foundation.md) | 0 |
 | Returns, volatility, distributions, dependence, random-walk tests | [stats-toolkit.md](stats-toolkit.md) | 2 |
 | Synthetic generators and known-answer tests | [validation.md](validation.md) | 5 |
+| Backtester: two engines, look-ahead check, comparison | [backtester.md](backtester.md) | 4 |
 
 ## Key decisions and trade-offs
 
@@ -23,3 +24,5 @@ Design docs describe how each component works. Decision records (in
 | [0006](../decisions/ADR-0006-validate-on-synthetic-data-first.md) | Every method is checked on synthetic data with a known answer | Validating on real data alone cannot tell skill from estimator bias |
 | [0007](../decisions/ADR-0007-engineering-standards.md) | Error family, strict typing on core maths, pre-commit, 3.12/3.13 CI | Strict typing everywhere rejected: pandas stubs make study scripts noisy |
 | [0008](../decisions/ADR-0008-short-rates-for-fx-carry.md) | Daily overnight rates for USD, EUR, GBP; monthly OECD rates for the other seven currencies | ECB policy-rate proxy for EUR rejected once EONIA was found on FRED; monthly carry is approximate |
+| [0009](../decisions/ADR-0009-backtest-conventions.md) | Target weights; fill at next open or next close; fixed bps costs; interest on cash and FX balances; adjusted ETF prices | Same-close fills rejected as look-ahead; spread estimators rejected for fixed, swept costs |
+| [0010](../decisions/ADR-0010-two-backtest-engines.md) | A fast weights engine and a bar-by-bar loop engine that must agree, plus a look-ahead check and a vectorbt cross-check | One shared accounting core rejected: a bug in it would pass the comparison |

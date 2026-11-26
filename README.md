@@ -17,7 +17,7 @@ and regime models. Every number is meant to be traceable to raw data, code and a
 | 0 | Data foundation: collectors, immutable raw store, clean tables, quality checks | Built |
 | 2 | Returns, volatility estimators, distributions, correlation and non-synchronous data, variance ratio, Hurst | Built |
 | 3 | Energy futures: contract mapping, roll engine, curves, convenience yield, Schwartz-Smith | Planned |
-| 4 | Backtesting engine, costs, walk-forward, purged CV, Deflated Sharpe, PBO | Planned |
+| 4 | Backtesting engine, costs, walk-forward, purged CV, Deflated Sharpe, PBO | In progress: two engines built and cross-checked ([design](docs/design/backtester.md)) |
 | 5 | Synthetic data and known-answer tests: how often methods fool you | Built |
 | 6 | Pairs, cointegration, Kalman hedge ratios, PCA statistical arbitrage | Planned |
 | 7 | Trend, carry, cross-sectional momentum, FX forward-premium regression | Planned |
@@ -310,6 +310,7 @@ con.sql("SELECT date, value FROM observations WHERE series_id = 'DGS10' ORDER BY
 - [Pillar 0 write-up](docs/projects/pillar-0/PROJECT.md)
 - [Pillar 2 write-up](docs/projects/pillar-2/PROJECT.md)
 - [Pillar 5 write-up](docs/projects/pillar-5/PROJECT.md)
+- [Backtester design](docs/design/backtester.md) (Pillar 4, in progress)
 - [Design docs](docs/design/)
 - [Decision records](docs/decisions/)
 - [Development log](docs/devlog/)
