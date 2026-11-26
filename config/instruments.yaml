@@ -82,6 +82,6 @@ short_rates:
   CHF: {day_count: 360, segments: [{series: IRSTCI01CHM156N}]}
   AUD: {day_count: 365, segments: [{series: IRSTCI01AUM156N}]}
   CAD: {day_count: 365, segments: [{series: IRSTCI01CAM156N}]}
-  NOK: {day_count: 360, segments: [{series: IRSTCI01NOM156N}]}
+  NOK: {day_count: 365, segments: [{series: IRSTCI01NOM156N}]}  # NOWA convention (Norges Bank)
   NZD: {day_count: 365, segments: [{series: IR3TIB01NZM156N}]}
   SEK: {day_count: 360, segments: [{series: IR3TIB01SEM156N}]}

@@ -29,8 +29,9 @@ What FRED has, checked on 2026-11-26:
   `quant_research.data.rates` builds one calendar-day series per currency and raises
   `MissingValuesError` on any gap longer than the fill limit (7 days daily, 62 days monthly).
   `qrf check` reports one PASS / FAIL row per currency.
-- **Day counts** follow each market's convention: ACT/360 for USD, EUR, CHF, NOK, SEK and
-  ACT/365 for GBP, JPY, AUD, CAD, NZD.
+- **Day counts** follow each market's overnight benchmark: ACT/360 for USD, EUR, CHF, SEK and
+  ACT/365 for GBP, JPY, AUD, CAD, NZD and NOK (NOWA is ACT/365 per Norges Bank, unlike NIBOR's
+  ACT/360).
 - **Accounting, not signals:** these are the rates earned over each day, which is right for
   carry accrual. A strategy that *trades on* rate differentials must lag them first, because a
   monthly average is published weeks after the month starts.
