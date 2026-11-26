@@ -19,7 +19,8 @@ from quant_research.errors import InvalidParameterError
 EULER_GAMMA = 0.5772156649015329
 
 
-def expected_max_sharpe(n_trials: int, sd: float = 1.0) -> float:
+def expected_max_sharpe(n_trials: float, sd: float = 1.0) -> float:
+    """Expected best Sharpe of n_trials independent no-skill trials (n_trials may be fractional)."""
     if n_trials < 1:
         raise InvalidParameterError("n_trials must be >= 1")
     if n_trials == 1:
