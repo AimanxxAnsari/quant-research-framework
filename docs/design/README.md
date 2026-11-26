@@ -22,3 +22,4 @@ Design docs describe how each component works. Decision records (in
 | [0005](../decisions/ADR-0005-statistics-conventions.md) | Log returns, adjusted prices, 252 days, robust tests, Holm correction | Simple returns and homoskedastic tests rejected for statistics |
 | [0006](../decisions/ADR-0006-validate-on-synthetic-data-first.md) | Every method is checked on synthetic data with a known answer | Validating on real data alone cannot tell skill from estimator bias |
 | [0007](../decisions/ADR-0007-engineering-standards.md) | Error family, strict typing on core maths, pre-commit, 3.12/3.13 CI | Strict typing everywhere rejected: pandas stubs make study scripts noisy |
+| [0008](../decisions/ADR-0008-short-rates-for-fx-carry.md) | Daily overnight rates for USD, EUR, GBP; monthly OECD rates for the other seven currencies | ECB policy-rate proxy for EUR rejected once EONIA was found on FRED; monthly carry is approximate |

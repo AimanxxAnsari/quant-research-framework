@@ -8,7 +8,9 @@ Each check returns a row: table, check, subject, status (PASS / WARN / FAIL), de
 * range       - values inside plausible bounds for their asset class (FAIL)
 * ohlc        - low <= open, close <= high and prices > 0 (FAIL)
 * jumps       - adjusted daily returns beyond +-40% (WARN: data error or real event)
-* freshness   - last observation recent enough for the series frequency (WARN)
+* short rate  - every currency's spliced short rate has no gaps (FAIL)
+* freshness   - last observation recent enough for the series frequency (WARN); series marked
+                ``discontinued`` in the instrument master are exempt
 """
 
 from __future__ import annotations
@@ -21,7 +23,8 @@ from quant_research.data.settings import Settings
 
 # Plausible bounds by asset class (value units as stored). WTI spot went negative in 2020.
 RANGES = {
-    "rates": (-5.0, 25.0),
+    # Short rates reached 26.5% (New Zealand, 1985) and 28.5% (Norway call money, 1982).
+    "rates": (-5.0, 40.0),
     "volatility": (5.0, 500.0),  # OVX reached ~325 in April 2020
     "fx": (1e-4, 1e4),
     "commodity": (-50.0, 500.0),
@@ -72,6 +75,8 @@ def check_observations(
 
     asset_class = dict(zip(series["series_id"], series["asset_class"], strict=True))
     frequency = dict(zip(series["series_id"], series["frequency"], strict=True))
+    fred_meta = settings.instruments()["fred"]
+    discontinued = {sid for sid, m in fred_meta.items() if m.get("discontinued")}
     for key, g in obs.groupby("series_id", sort=True):
         sid = str(key)
         ac = asset_class.get(sid) or ""
@@ -92,7 +97,7 @@ def check_observations(
         freq = frequency.get(sid) or "daily"
         age = (pd.Timestamp(as_of) - g["date"].max()).days
         limit = STALE_DAYS.get(freq, 10)
-        if age > limit:
+        if age > limit and sid not in discontinued:
             rows.append(
                 _row(
                     "observations",
@@ -104,6 +109,29 @@ def check_observations(
                 )
             )
     rows.append(_row("observations", "range", "all series", True, "checked per series"))
+    return rows
+
+
+def check_short_rates(obs: pd.DataFrame, settings: Settings) -> list[dict]:
+    """Each currency's spliced short rate must be complete: no gap longer than the fill limit
+    between its first observation and its latest one (staleness is the freshness check's job)."""
+    from quant_research.data.rates import parse_specs, splice
+    from quant_research.errors import QuantResearchError
+
+    rows = []
+    by_series = {str(k): g.set_index("date")["value"] for k, g in obs.groupby("series_id")}
+    for ccy, spec in parse_specs(settings.instruments()).items():
+        own = [by_series[s.series] for s in spec.segments if s.series in by_series]
+        if not own:
+            rows.append(_row("observations", "short rate", ccy, False, "no data for any segment"))
+            continue
+        end = max(s.index.max() for s in own).date()
+        try:
+            rate = splice(spec, by_series, end)
+            detail = f"from {rate.index[0]:%Y-%m-%d}, last observation {end:%Y-%m-%d}, no gaps"
+            rows.append(_row("observations", "short rate", ccy, True, detail))
+        except QuantResearchError as e:
+            rows.append(_row("observations", "short rate", ccy, False, str(e)))
     return rows
 
 
@@ -184,6 +212,7 @@ def run_checks(settings: Settings, as_of: date | None = None) -> pd.DataFrame:
     prices = pd.read_parquet(clean / "prices.parquet")
     series = pd.read_parquet(clean / "series.parquet")
     rows = check_observations(obs, series, settings, as_of)
+    rows += check_short_rates(obs, settings)
     rows += check_prices(prices, all_tickers(settings), as_of)
     return pd.DataFrame(rows)
 

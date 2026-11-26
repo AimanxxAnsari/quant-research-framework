@@ -11,6 +11,20 @@ fred:
   T10YIE:  {name: "10Y breakeven inflation", asset_class: rates, unit: percent, frequency: daily}
   DFF:     {name: "Effective federal funds rate", asset_class: rates, unit: percent, frequency: daily}
   SOFR:    {name: "Secured overnight financing rate", asset_class: rates, unit: percent, frequency: daily}
+  # Short-term money-market rates for FX carry and cash (ADR-0008). Daily where FRED has an
+  # overnight rate; otherwise OECD monthly averages (call money, or 3-month interbank where the
+  # call-money series has been discontinued).
+  EONIARATE: {name: "Euro overnight index average (EONIA)", asset_class: rates, unit: percent, frequency: daily, discontinued: true}
+  ECBDFR:   {name: "ECB deposit facility rate (policy reference)", asset_class: rates, unit: percent, frequency: daily}
+  ECBESTRVOLWGTTRMDMNRT: {name: "Euro short-term rate (ESTR)", asset_class: rates, unit: percent, frequency: daily}
+  IUDSOIA:  {name: "Sterling overnight index average (SONIA)", asset_class: rates, unit: percent, frequency: daily}
+  IRSTCI01JPM156N: {name: "Japan call money rate (OECD, monthly)", asset_class: rates, unit: percent, frequency: monthly}
+  IRSTCI01CHM156N: {name: "Switzerland call money rate (OECD, monthly)", asset_class: rates, unit: percent, frequency: monthly}
+  IRSTCI01AUM156N: {name: "Australia call money rate (OECD, monthly)", asset_class: rates, unit: percent, frequency: monthly}
+  IRSTCI01CAM156N: {name: "Canada call money rate (OECD, monthly)", asset_class: rates, unit: percent, frequency: monthly}
+  IRSTCI01NOM156N: {name: "Norway call money rate (OECD, monthly)", asset_class: rates, unit: percent, frequency: monthly}
+  IR3TIB01NZM156N: {name: "New Zealand 3-month interbank rate (OECD, monthly)", asset_class: rates, unit: percent, frequency: monthly}
+  IR3TIB01SEM156N: {name: "Sweden 3-month interbank rate (OECD, monthly)", asset_class: rates, unit: percent, frequency: monthly}
   # Implied volatility indices (index points)
   VIXCLS:  {name: "CBOE VIX (S&P 500 30d implied vol)", asset_class: volatility, unit: index, frequency: daily}
   OVXCLS:  {name: "CBOE crude oil volatility index", asset_class: volatility, unit: index, frequency: daily}
@@ -50,3 +64,24 @@ tiingo:
     bonds: [TLT, IEF, SHY, TIP, LQD, HYG]
     commodities: [GLD, SLV, GDX, USO, UNG, DBC, DBA, CPER]
     fx: [UUP, FXE]
+
+# Short rate per currency, in percent per annum, spliced from the FRED series above (ADR-0008).
+# Segments run in order; `until` is the last day a segment applies (the final one is open-ended).
+# day_count is the money-market convention: interest = rate * calendar days / day_count.
+short_rates:
+  USD: {day_count: 360, segments: [{series: DFF}]}
+  EUR:
+    day_count: 360
+    segments:
+      # EONIA until ESTR starts (1 Oct 2019). From then until its end in 2021 EONIA was defined
+      # as ESTR + 8.5 bp, so switching at the start of ESTR loses nothing.
+      - {series: EONIARATE, until: 2019-09-30}
+      - {series: ECBESTRVOLWGTTRMDMNRT}
+  GBP: {day_count: 365, segments: [{series: IUDSOIA}]}
+  JPY: {day_count: 365, segments: [{series: IRSTCI01JPM156N}]}
+  CHF: {day_count: 360, segments: [{series: IRSTCI01CHM156N}]}
+  AUD: {day_count: 365, segments: [{series: IRSTCI01AUM156N}]}
+  CAD: {day_count: 365, segments: [{series: IRSTCI01CAM156N}]}
+  NOK: {day_count: 360, segments: [{series: IRSTCI01NOM156N}]}
+  NZD: {day_count: 365, segments: [{series: IR3TIB01NZM156N}]}
+  SEK: {day_count: 360, segments: [{series: IR3TIB01SEM156N}]}

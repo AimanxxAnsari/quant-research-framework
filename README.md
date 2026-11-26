@@ -1,5 +1,7 @@
 # quant-research-framework
 
+[![CI](https://github.com/AimanxxAnsari/quant-research-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/AimanxxAnsari/quant-research-framework/actions/workflows/ci.yml)
+
 **A cross-asset quant research framework built on a point-in-time, reproducible data foundation.**
 
 An independent quant research project covering rates, FX, equity, commodity and volatility data:
@@ -43,7 +45,7 @@ quality checks: coverage, uniqueness, missing values, plausible ranges, OHLC con
 
 | Source | Content | Coverage at first build |
 |---|---|---|
-| FRED | 26 series: Treasury constant-maturity yields, fed funds, SOFR, real yield, breakeven, VIX / OVX / GVZ, 9 H.10 FX rates, WTI and Brent spot, CPI, unemployment | from 1947 (series-dependent) to the latest release |
+| FRED | 37 series: Treasury constant-maturity yields, fed funds, SOFR, real yield, breakeven, VIX / OVX / GVZ, 9 H.10 FX rates, WTI and Brent spot, CPI, unemployment, and short rates for 10 currencies (daily for USD, EUR, GBP; monthly OECD averages for the rest) | from 1947 (series-dependent) to the latest release |
 | US Treasury | Daily par nominal (from 1990) and real (from 2003) yield curves, 19 tenors | 1990 to latest |
 | Kenneth French library | Daily Fama-French 3 factors and momentum | collector built; download currently blocked (HTTP 403), see devlog |
 | Tiingo | 33 ETFs across US and international equity, sectors, bonds, commodities, FX; raw and adjusted OHLCV | 2000 to latest |
@@ -290,7 +292,8 @@ Pillar 4 uses this benchmark in the Deflated Sharpe Ratio.
 cp .env.example .env          # add FRED_API_KEY and TIINGO_API_KEY (free)
 make install
 make refresh                  # fetch -> build -> check  (or: uv run qrf refresh)
-make test
+make test                     # also: make lint, make typecheck
+make hooks                    # optional: run the pre-commit checks on every commit
 ```
 
 Query with SQL:
