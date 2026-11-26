@@ -138,3 +138,17 @@ def test_health_check_reports_a_gap(settings):
     assert usd["status"] == "FAIL" and "USD" in usd["detail"]
     others = rows[rows["subject"] != "USD"]
     assert (others["status"] == "FAIL").all()  # no data at all for the other currencies
+
+
+def test_start_skips_old_segments_and_requires_coverage_from_start():
+    spec = _spec(
+        RateSegment("OLD", "daily", until=date(2019, 9, 30)),
+        RateSegment("NEW", "daily"),
+    )
+    new_only = {"NEW": _daily("2024-01-01", "2024-01-31", 2.0)}  # OLD history missing
+    out = splice(spec, new_only, date(2024, 1, 31), start=date(2024, 1, 3))
+    assert out.index[0] == pd.Timestamp("2024-01-03") and (out == 2.0).all()
+    with pytest.raises(MissingValuesError):
+        splice(spec, new_only, date(2024, 1, 31))  # without start, the OLD gap matters
+    with pytest.raises(MissingValuesError):
+        splice(spec, new_only, date(2024, 1, 31), start=date(2023, 12, 1))  # data starts later

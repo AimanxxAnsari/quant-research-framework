@@ -95,48 +95,60 @@ def _to_calendar(obs: pd.Series, frequency: str, end: pd.Timestamp) -> pd.Series
     return obs.reindex(days).ffill(limit=limit)
 
 
-def splice(spec: ShortRateSpec, observations: Mapping[str, pd.Series], end: date) -> pd.Series:
+def splice(
+    spec: ShortRateSpec,
+    observations: Mapping[str, pd.Series],
+    end: date,
+    start: date | None = None,
+) -> pd.Series:
     """One calendar-day series for a currency, from its segments' raw observations.
 
-    The result starts at the first observation of the first segment and runs to ``end``.
-    Raises ``MissingValuesError`` if any day in that range has no rate (a gap longer than the
-    fill limit, a segment with no data, or data that stops before ``end``).
+    The result runs from ``start`` (default: the first observation of the first segment) to
+    ``end``; segments that end before ``start`` are skipped. Raises ``MissingValuesError`` if
+    any day in that range has no rate (a gap longer than the fill limit, a segment with no
+    data, or data that starts after ``start`` or stops before ``end``).
     """
     stop = pd.Timestamp(end)
+    begin = pd.Timestamp(start) if start is not None else None
     pieces = []
-    start: pd.Timestamp | None = None
+    lo: pd.Timestamp | None = begin
     for seg in spec.segments:
+        hi = pd.Timestamp(seg.until) if seg.until is not None else stop
+        if begin is not None and hi < begin:
+            continue  # this segment is over before the period we need
         cal = _to_calendar(
             observations.get(seg.series, pd.Series(dtype=float)), seg.frequency, stop
         )
-        lo = start
-        hi = pd.Timestamp(seg.until) if seg.until is not None else stop
         piece = cal.loc[lo:hi] if lo is not None else cal.loc[:hi]
         if piece.empty:
             raise MissingValuesError(f"{spec.currency}: no {seg.series} data up to {hi:%Y-%m-%d}")
         pieces.append(piece)
-        start = hi + pd.Timedelta(days=1)
+        lo = hi + pd.Timedelta(days=1)
 
     out = pd.concat(pieces)
-    full = pd.date_range(out.index[0], stop, freq="D")
+    full = pd.date_range(begin if begin is not None else out.index[0], stop, freq="D")
     out = out.reindex(full).rename(spec.currency)
     missing = out[out.isna()]
     if len(missing):
         first = f"{missing.index[0]:%Y-%m-%d}"
         raise MissingValuesError(
             f"{spec.currency}: no short rate on {len(missing)} days, first {first}"
-            " (gap longer than the fill limit, or data ends before the requested date)"
+            " (gap longer than the fill limit, or data does not cover the requested period)"
         )
     return out
 
 
 def short_rates(
-    settings: Settings, currencies: list[str] | None = None, end: date | None = None
+    settings: Settings,
+    currencies: list[str] | None = None,
+    start: date | None = None,
+    end: date | None = None,
 ) -> pd.DataFrame:
     """Calendar-day short rates (percent per annum), one column per currency.
 
-    Each column starts where its own history starts (earlier rows are NaN) and runs without
-    gaps to ``end`` (default: the latest observation across the series used).
+    Without ``start`` each column begins where its own history begins (earlier rows are NaN);
+    with it, every column must be complete from ``start``. Columns run without gaps to ``end``
+    (default: the latest observation across the series used).
     """
     specs = parse_specs(settings.instruments())
     wanted = currencies or list(specs)
@@ -147,7 +159,7 @@ def short_rates(
     raw = access.series(settings, ids)
     obs = {sid: raw[sid].dropna() for sid in ids}
     stop = end or max(s.index.max() for s in obs.values()).date()
-    cols = [splice(specs[c], obs, stop) for c in wanted]
+    cols = [splice(specs[c], obs, stop, start) for c in wanted]
     return pd.concat(cols, axis=1)
 
 
