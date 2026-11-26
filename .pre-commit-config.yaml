@@ -29,7 +29,7 @@ repos:
         name: ruff format
         entry: uv run ruff format
         language: system
-        types: [python]
+        types_or: [python, markdown]  # ruff also formats Python code blocks in Markdown, as CI does
       - id: mypy
         name: mypy (strict on core maths)
         entry: uv run mypy

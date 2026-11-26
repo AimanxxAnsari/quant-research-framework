@@ -44,10 +44,11 @@ multiplier), no-trade bands, borrow fees, intraday data, live trading.
 ## Interfaces
 ```python
 market = load_market(settings, etfs=["SPY", "TLT"], fx=["EUR", "JPY"])
-config = load_config(settings)                       # or BacktestConfig(...)
+config = load_config(settings)  # or BacktestConfig(...)
 result = run(MovingAverageCrossover("SPY", 50, 200), market, config, engine="weights")
-results = run_matrix(strategy, market, config)       # both engines x both fills
-side_by_side(results, market); engine_agreement(results)
+results = run_matrix(strategy, market, config)  # both engines x both fills
+side_by_side(results, market)
+engine_agreement(results)
 ```
 
 ## Invariants
