@@ -9,7 +9,10 @@ qrf refresh                     # fetch + build + check
 from __future__ import annotations
 
 import argparse
+import importlib.util
+import subprocess
 import sys
+from pathlib import Path
 
 from quant_research.data.build import build
 from quant_research.data.collectors import COLLECTORS
@@ -92,6 +95,15 @@ def cmd_study(args, settings) -> int:
     return 0
 
 
+def cmd_app(args, settings) -> int:
+    """Start the Streamlit app (needs the optional group: uv sync --group app)."""
+    if importlib.util.find_spec("streamlit") is None:
+        print("The app needs Streamlit: run `uv sync --group app` first.", file=sys.stderr)
+        return 1
+    script = Path(__file__).parent / "app" / "main.py"
+    return subprocess.call([sys.executable, "-m", "streamlit", "run", str(script)])
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="qrf", description="quant-research-framework data tools")
     sub = p.add_subparsers(dest="command", required=True)
@@ -103,6 +115,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("build").set_defaults(func=cmd_build)
     sub.add_parser("check").set_defaults(func=cmd_check)
     sub.add_parser("monitor").set_defaults(func=cmd_monitor)
+    sub.add_parser("app", help="open the engine lab and study explorer").set_defaults(func=cmd_app)
     st = sub.add_parser("study")
     st.add_argument("name", choices=["pillar2", "pillar4", "pillar5"])
     st.add_argument("--reuse", action="store_true", help="pillar4: reuse cached trial returns")

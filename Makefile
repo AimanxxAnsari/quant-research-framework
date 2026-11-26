@@ -1,4 +1,4 @@
-.PHONY: install hooks test lint typecheck fetch build check refresh
+.PHONY: install hooks test lint typecheck fetch build check refresh app
 
 install:
 	uv sync --all-groups
@@ -26,3 +26,6 @@ check:
 
 refresh:
 	uv run qrf refresh
+
+app:
+	uv run qrf app

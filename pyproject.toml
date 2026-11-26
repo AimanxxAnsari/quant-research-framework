@@ -22,6 +22,10 @@ dependencies = [
 qrf = "quant_research.cli:main"
 
 [dependency-groups]
+app = [
+    "plotly>=7.2.0",
+    "streamlit>=1.67.0",
+]
 dev = [
     "pytest>=8.0",
     "hypothesis>=6.100",
@@ -52,9 +56,9 @@ files = ["src"]
 warn_unused_ignores = true
 warn_redundant_casts = true
 
-# statsmodels, arch and vectorbt ship without type information.
+# statsmodels, arch, vectorbt and plotly ship without type information.
 [[tool.mypy.overrides]]
-module = ["statsmodels.*", "arch.*", "vectorbt.*"]
+module = ["statsmodels.*", "arch.*", "vectorbt.*", "plotly.*"]
 ignore_missing_imports = true
 
 # Core maths is checked strictly (ADR-0007). Plumbing, studies and plotting use standard mode.
