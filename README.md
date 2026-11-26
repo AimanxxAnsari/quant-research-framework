@@ -17,7 +17,7 @@ and regime models. Every number is meant to be traceable to raw data, code and a
 | 0 | Data foundation: collectors, immutable raw store, clean tables, quality checks | Built |
 | 2 | Returns, volatility estimators, distributions, correlation and non-synchronous data, variance ratio, Hurst | Built |
 | 3 | Energy futures: contract mapping, roll engine, curves, convenience yield, Schwartz-Smith | Planned |
-| 4 | Backtesting engine, costs, walk-forward, purged CV, Deflated Sharpe, PBO | In progress: engines and validation tools built and tested ([design](docs/design/backtester.md)); study next |
+| 4 | Backtesting engine, costs, walk-forward, purged CV, Deflated Sharpe, PBO | Built: two engines, validation toolkit, pre-registered study with holdout, engine lab app ([design](docs/design/backtester.md)) |
 | 5 | Synthetic data and known-answer tests: how often methods fool you | Built |
 | 6 | Pairs, cointegration, Kalman hedge ratios, PCA statistical arbitrage | Planned |
 | 7 | Trend, carry, cross-sectional momentum, FX forward-premium regression | Planned |
@@ -397,6 +397,24 @@ Per-asset picks: [`walk_forward.csv`](reports/pillar4/holdout/walk_forward.csv).
 
 <!-- PILLAR4_HOLDOUT:END -->
 
+### Engine lab and study explorer
+
+A local Streamlit app ([design](docs/design/app.md)). The **engine lab** runs any of the 14
+rule families on one asset with the weights engine, the loop engine, or both. With both, each
+engine's analysis sits side by side (metrics against the benchmark, growth of 1, drawdown,
+position), followed by the comparison: metrics and their difference, the NAV gap over time, run
+times and the look-ahead check. The **study explorer** reads the committed Pillar 4 results:
+headline tests, the distribution of trial Sharpe ratios, a filterable trial table, per-asset
+statistics and the holdout.
+
+It works from a clean clone on a seeded synthetic market (no keys), or on your own data after
+`make refresh`. Anything tuned in the lab is in-sample exploration, not part of the study.
+
+```bash
+uv sync --group app
+uv run qrf app        # or: make app
+```
+
 ## Run
 
 ```bash
@@ -405,6 +423,7 @@ make install
 make refresh                  # fetch -> build -> check  (or: uv run qrf refresh)
 make test                     # also: make lint, make typecheck
 make hooks                    # optional: run the pre-commit checks on every commit
+make app                      # engine lab and study explorer (Streamlit)
 ```
 
 Query with SQL:

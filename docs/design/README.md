@@ -11,6 +11,7 @@ Design docs describe how each component works. Decision records (in
 | Returns, volatility, distributions, dependence, random-walk tests | [stats-toolkit.md](stats-toolkit.md) | 2 |
 | Synthetic generators and known-answer tests; tools for judging many backtests | [validation.md](validation.md) | 5, 4 |
 | Backtester: two engines, look-ahead check, comparison | [backtester.md](backtester.md) | 4 |
+| Streamlit app: engine lab with the engine toggle, study explorer | [app.md](app.md) | 4 |
 
 ## Key decisions and trade-offs
 
@@ -28,3 +29,4 @@ Design docs describe how each component works. Decision records (in
 | [0010](../decisions/ADR-0010-two-backtest-engines.md) | A fast weights engine and a bar-by-bar loop engine that must agree, plus a look-ahead check and a vectorbt cross-check | One shared accounting core rejected: a bug in it would pass the comparison |
 | [0011](../decisions/ADR-0011-overfitting-toolkit.md) | DSR with an effective trial count, PBO by CSCV, purged k-fold and CPCV, haircut Sharpe, SPA / StepM, full metrics and cost sweep | ONC clustering deferred; Harvey-Liu correlated adjustment not reproducible, Holm and BHY on logged trials instead |
 | [0012](../decisions/ADR-0012-popular-rules-study-design.md) | Popular-rules study: 14 families, 2,364 trials, buy-and-hold / cash benchmarks, pre-registered with a sealed holdout | Cash as the ETF benchmark rejected (rewards the equity premium); intraday rules dropped |
+| [0013](../decisions/ADR-0013-engine-lab-app.md) | Local Streamlit app with a synthetic demo market: engine lab (weights, loop or both) and a read-only study explorer | Public hosting rejected (vendor prices); an in-app validation page rejected (invites fishing) |

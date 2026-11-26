@@ -21,6 +21,9 @@ whose timing and costs are trustworthy is the prerequisite.
    and StepM. Each reproduces a published example or a known answer.
 4. **The study** (ADR-0012): 14 rule families, 2,364 trials on 33 ETFs and 9 currencies,
    pre-registered and tagged before any result, with a sealed five-year holdout.
+5. **Engine lab app** (ADR-0013): a local Streamlit page that runs any rule on the weights
+   engine, the loop engine or both, with each engine's analysis side by side and a comparison,
+   plus a read-only explorer of the study results. Runs from a clean clone on a synthetic market.
 
 ## Results
 All numbers are generated: see the **Pillar 4** section of the [README](../../../README.md)
@@ -45,6 +48,9 @@ README's Holdout section for the generated numbers).
 - The embargo in purged cross-validation started inside the purged rows and did nothing.
 - A 2024 backtest failed on a 2019 gap in rate history it never used; rates now start at the
   backtest's start.
+- The loop engine took 31 s for the filter rule on NZD's full history in the app. Profiling
+  showed why: it asks the rule for a decision on every bar's history, so time grows with the
+  square of the length. The reference engine stays as it is; the app has a first-year setting.
 - The first full run's manifest showed uncommitted code (the report module was being written at
   the same time). The study was re-run from a clean commit, and the manifest now lists any
   uncommitted files instead of a yes/no flag.
