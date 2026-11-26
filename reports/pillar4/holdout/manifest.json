@@ -1,0 +1,22 @@
+{
+  "created_utc": "2026-11-26T13:42:14+00:00",
+  "git_commit": "c1479b4174858d918b4f406b3ea5d1c7b988a405",
+  "uncommitted_files": [],
+  "data_through": "2026-11-23",
+  "data_sha256": {
+    "observations.parquet": "b410ef3db5a4af4d8aa3dd8ec44071ec71024ff894026c3e84544ae97ac32be6",
+    "prices.parquet": "308370d8e42a711dbfe3093f0bc7c9a30bafc6fa64b237fd4c00a9f6a0b14f47",
+    "series.parquet": "c7aa6297dde48b7814dc1b8057254f498a48e8c654263a6a394c468325e4778b"
+  },
+  "python": "3.12.16",
+  "packages": {
+    "numpy": "2.5.5",
+    "pandas": "3.1.1",
+    "scipy": "1.18.1",
+    "statsmodels": "0.15.0",
+    "arch": "9.0.0",
+    "duckdb": "2.0.1"
+  },
+  "stage": "holdout",
+  "holdout_start": "2021-12-01"
+}

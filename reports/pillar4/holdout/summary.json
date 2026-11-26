@@ -1,0 +1,16 @@
+{
+  "holdout_start": "2021-12-01",
+  "holdout_end": "2026-11-23",
+  "selection": "no H2 survivors, so the 10 best development trials",
+  "consistency_max_gap": 0.0,
+  "top_trials_positive": 9,
+  "top_trials": 10,
+  "walk_forward_positive": {
+    "etf": 0.2727272727272727,
+    "fx": 0.5555555555555556
+  },
+  "walk_forward_median": {
+    "etf": -0.15516094724470916,
+    "fx": 0.022885607896543803
+  }
+}

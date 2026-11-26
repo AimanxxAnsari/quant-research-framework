@@ -1,0 +1,43 @@
+asset,class,holdout Sharpe,steps,picks
+SPY,etf,-0.10956956479473311,5,filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1
+QQQ,etf,-0.3135917683037625,5,"time-series momentum|lookback=252 ; time-series momentum|lookback=252 ; MA crossover|fast=50,slow=200 ; MA crossover|fast=50,slow=200 ; MA crossover|fast=50,slow=200"
+IWM,etf,0.059858251899646615,5,"shooting star|ratio=2,hold_days=5 ; shooting star|ratio=2,hold_days=5 ; shooting star|ratio=2,hold_days=5 ; shooting star|ratio=2,hold_days=5 ; shooting star|ratio=2,hold_days=5"
+RSP,etf,0.0071510185808347755,5,"shooting star|ratio=3,hold_days=20 ; shooting star|ratio=2,hold_days=20 ; shooting star|ratio=2,hold_days=20 ; shooting star|ratio=2,hold_days=20 ; shooting star|ratio=3,hold_days=5"
+EFA,etf,-0.123644125597793,5,"MA crossover|fast=10,slow=200 ; price vs MA|n=200 ; price vs MA|n=200 ; price vs MA|n=200 ; price vs MA|n=200"
+VGK,etf,-0.16229247930241933,5,"MA crossover|fast=10,slow=100 ; MA crossover|fast=10,slow=100 ; MA crossover|fast=10,slow=100 ; MA crossover|fast=10,slow=100 ; MA crossover|fast=20,slow=100"
+EWJ,etf,-0.050063184498623306,5,"Dual Thrust (daily)|n=5,k=0.5 ; Dual Thrust (daily)|n=5,k=0.5 ; Dual Thrust (daily)|n=5,k=0.5 ; Dual Thrust (daily)|n=5,k=0.5 ; shooting star|ratio=3,hold_days=20"
+EEM,etf,-0.2734116617526398,5,filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1
+EWA,etf,0.0602587569776027,5,"shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5"
+EWC,etf,-0.32197199500823354,5,"shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5"
+XLE,etf,-0.11464334942064919,5,"shooting star|ratio=2,hold_days=20 ; shooting star|ratio=2,hold_days=20 ; shooting star|ratio=2,hold_days=20 ; shooting star|ratio=2,hold_days=20 ; shooting star|ratio=2,hold_days=20"
+XLF,etf,-0.5536817228806529,5,"MA crossover|fast=20,slow=100 ; MA crossover|fast=20,slow=100 ; MA crossover|fast=20,slow=100 ; MA crossover|fast=20,slow=100 ; MA crossover|fast=20,slow=100"
+XLK,etf,-0.14878989099572318,5,"filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1 ; MA crossover|fast=20,slow=200 ; filter rule|x=0.1"
+XLV,etf,-0.5138543707231374,5,"shooting star|ratio=3,hold_days=10 ; shooting star|ratio=3,hold_days=10 ; shooting star|ratio=3,hold_days=10 ; shooting star|ratio=3,hold_days=10 ; Parabolic SAR|step=0.02,max_af=0.2"
+XLU,etf,-0.004999868635293705,5,"MA crossover|fast=50,slow=200 ; MA crossover|fast=50,slow=200 ; shooting star|ratio=2,hold_days=5 ; MA crossover|fast=50,slow=200 ; shooting star|ratio=2,hold_days=5"
+XLP,etf,-0.660316851701401,5,"shooting star|ratio=2,hold_days=5 ; shooting star|ratio=2,hold_days=5 ; shooting star|ratio=2,hold_days=5 ; shooting star|ratio=2,hold_days=5 ; shooting star|ratio=2,hold_days=5"
+XLI,etf,-0.32564358085366174,5,filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1
+TLT,etf,0.6176946627767883,5,"MA crossover|fast=20,slow=100 ; MA crossover|fast=20,slow=100 ; MA crossover|fast=20,slow=100 ; MA crossover|fast=20,slow=100 ; MA crossover|fast=20,slow=100"
+IEF,etf,0.4410563486041227,5,"MA crossover|fast=10,slow=100 ; channel breakout|n=200 ; channel breakout|n=200 ; channel breakout|n=200 ; channel breakout|n=200"
+SHY,etf,-0.15516094724470916,5,filter rule|x=0.1 ; channel breakout|n=200 ; channel breakout|n=200 ; channel breakout|n=200 ; channel breakout|n=200
+TIP,etf,0.20173966354427872,5,"MA crossover|fast=20,slow=200 ; filter rule|x=0.05 ; MA crossover|fast=20,slow=200 ; Dual Thrust (daily)|n=5,k=0.7 ; Dual Thrust (daily)|n=5,k=0.7"
+LQD,etf,0.3637945247041995,5,"filter rule|x=0.02 ; filter rule|x=0.02 ; filter rule|x=0.02 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5"
+HYG,etf,-0.5605886996431101,5,Heikin-Ashi|k=1 ; Heikin-Ashi|k=1 ; Heikin-Ashi|k=1 ; Heikin-Ashi|k=1 ; Heikin-Ashi|k=1
+GLD,etf,-0.2836117042875178,5,"shooting star|ratio=3,hold_days=20 ; shooting star|ratio=3,hold_days=20 ; shooting star|ratio=3,hold_days=20 ; shooting star|ratio=3,hold_days=20 ; MA crossover|fast=50,slow=100"
+SLV,etf,-0.5299782223834736,5,"shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5 ; shooting star|ratio=3,hold_days=5"
+GDX,etf,-0.6742812016966784,5,"RSI|period=7,lower=30,upper=70 ; RSI|period=7,lower=30,upper=70 ; RSI|period=7,lower=30,upper=70 ; RSI|period=7,lower=30,upper=70 ; shooting star|ratio=2,hold_days=5"
+USO,etf,-0.5363922550120684,5,stochastic oscillator|n=21 ; stochastic oscillator|n=14 ; stochastic oscillator|n=14 ; stochastic oscillator|n=14 ; stochastic oscillator|n=14
+UNG,etf,0.4164546281587929,5,"RSI|period=14,lower=30,upper=70 ; RSI|period=14,lower=30,upper=70 ; MA crossover|fast=50,slow=200 ; MA crossover|fast=50,slow=200 ; RSI|period=14,lower=30,upper=70"
+DBC,etf,-0.6220712380745684,5,"Parabolic SAR|step=0.04,max_af=0.4 ; Parabolic SAR|step=0.04,max_af=0.4 ; Parabolic SAR|step=0.04,max_af=0.4 ; MA crossover|fast=50,slow=100 ; MA crossover|fast=50,slow=100"
+DBA,etf,-0.13270176370959763,5,channel breakout|n=100 ; price vs MA|n=100 ; channel breakout|n=100 ; channel breakout|n=100 ; channel breakout|n=100
+CPER,etf,-0.31210101047855915,5,"shooting star|ratio=3,hold_days=10 ; shooting star|ratio=3,hold_days=10 ; shooting star|ratio=3,hold_days=10 ; shooting star|ratio=3,hold_days=10 ; shooting star|ratio=3,hold_days=10"
+UUP,etf,-0.28372590941739406,5,"Dual Thrust (daily)|n=10,k=0.3 ; Dual Thrust (daily)|n=10,k=0.3 ; Dual Thrust (daily)|n=10,k=0.3 ; Dual Thrust (daily)|n=10,k=0.3 ; Dual Thrust (daily)|n=10,k=0.3"
+FXE,etf,0.6729795353710862,5,"Dual Thrust (daily)|n=5,k=0.7 ; Dual Thrust (daily)|n=5,k=0.7 ; Dual Thrust (daily)|n=5,k=0.7 ; Dual Thrust (daily)|n=5,k=0.7 ; Dual Thrust (daily)|n=5,k=0.7"
+EUR,fx,0.022885607896543803,5,"MA crossover|fast=50,slow=100 ; MA crossover|fast=50,slow=100 ; MA crossover|fast=50,slow=100 ; MA crossover|fast=50,slow=100 ; MA crossover|fast=50,slow=100"
+GBP,fx,-0.43395984600320486,5,"Bollinger bands|n=50,k=1.5 ; time-series momentum|lookback=126 ; RSI|period=14,lower=20,upper=80 ; RSI|period=14,lower=20,upper=80 ; RSI|period=14,lower=20,upper=80"
+AUD,fx,0.4977469545180959,5,filter rule|x=0.02 ; filter rule|x=0.02 ; filter rule|x=0.02 ; filter rule|x=0.02 ; filter rule|x=0.02
+NZD,fx,-1.1025292532330153,5,filter rule|x=0.05 ; filter rule|x=0.05 ; filter rule|x=0.05 ; filter rule|x=0.05 ; filter rule|x=0.05
+JPY,fx,0.6001363692394588,5,time-series momentum|lookback=252 ; time-series momentum|lookback=252 ; time-series momentum|lookback=252 ; time-series momentum|lookback=252 ; time-series momentum|lookback=252
+CHF,fx,0.12172353714144181,5,channel breakout|n=50 ; channel breakout|n=50 ; channel breakout|n=50 ; channel breakout|n=50 ; channel breakout|n=50
+CAD,fx,0.1426795276258815,5,filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1 ; filter rule|x=0.1
+NOK,fx,-0.3638080458873783,5,"MA crossover|fast=10,slow=200 ; MA crossover|fast=10,slow=200 ; MA crossover|fast=10,slow=200 ; MA crossover|fast=50,slow=200 ; MA crossover|fast=50,slow=200"
+SEK,fx,-0.5837900406149545,5,"MA crossover|fast=20,slow=200 ; MA crossover|fast=20,slow=200 ; MA crossover|fast=50,slow=200 ; filter rule|x=0.1 ; filter rule|x=0.1"
