@@ -75,8 +75,13 @@ def cmd_monitor(args, settings) -> int:
 def cmd_study(args, settings) -> int:
     from quant_research.studies import pillar2, pillar5
 
-    studies = {"pillar2": pillar2.run, "pillar5": pillar5.run}
-    studies[args.name](settings)
+    if args.name == "pillar4":
+        from quant_research.studies import pillar4, pillar4_report
+
+        pillar4.run_development(settings, recompute=not args.reuse)
+        pillar4_report.run(settings)
+    else:
+        {"pillar2": pillar2.run, "pillar5": pillar5.run}[args.name](settings)
     print(f"{args.name}: results written to README.md and reports/{args.name}/")
     return 0
 
@@ -93,7 +98,8 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("check").set_defaults(func=cmd_check)
     sub.add_parser("monitor").set_defaults(func=cmd_monitor)
     st = sub.add_parser("study")
-    st.add_argument("name", choices=["pillar2", "pillar5"])
+    st.add_argument("name", choices=["pillar2", "pillar4", "pillar5"])
+    st.add_argument("--reuse", action="store_true", help="pillar4: reuse cached trial returns")
     st.set_defaults(func=cmd_study)
     args = p.parse_args(argv)
     return args.func(args, load_settings())

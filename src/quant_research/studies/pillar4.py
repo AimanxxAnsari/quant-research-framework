@@ -84,6 +84,7 @@ def benchmark_stats(settings: Settings, table: pd.DataFrame) -> pd.DataFrame:
 
 
 def run_development(settings: Settings, recompute: bool = True) -> dict[str, Any]:
+    manifest = run_manifest(settings, {"stage": "development", "period_end": DEV_END})
     cache = cache_dir(settings)
     if recompute:
         log.info("running %d assets", len(ASSETS))
@@ -104,6 +105,5 @@ def run_development(settings: Settings, recompute: bool = True) -> dict[str, Any
     per_asset.to_csv(out / "per_asset.csv")
     gaps.to_csv(out / "engine_check.csv")
     (out / "summary.json").write_text(json.dumps(summary, indent=2, default=str) + "\n")
-    manifest = run_manifest(settings, {"stage": "development", "period_end": DEV_END})
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return summary

@@ -89,4 +89,4 @@ def test_manifest_records_code_and_data(settings):
     m = run_manifest(settings, {"stage": "test"})
     assert m["data_through"] == "2026-01-05" and m["stage"] == "test"
     assert len(m["data_sha256"]["prices.parquet"]) == 64
-    assert len(m["git_commit"]) == 40
+    assert len(m["git_commit"]) == 40 and isinstance(m["uncommitted_files"], list)

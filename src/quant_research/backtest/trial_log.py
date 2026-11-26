@@ -45,7 +45,10 @@ def run_manifest(settings: Settings, extra: dict[str, Any] | None = None) -> dic
     return {
         "created_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "git_commit": _git(settings.root, "rev-parse", "HEAD"),
-        "git_dirty": bool(_git(settings.root, "status", "--porcelain", "--", "src", "config")),
+        # code or config files that differed from the commit when the run started
+        "uncommitted_files": _git(
+            settings.root, "status", "--porcelain", "--", "src", "config"
+        ).splitlines(),
         "data_through": data_through(settings),
         "data_sha256": {p.name: _sha256(p) for p in clean},
         "python": platform.python_version(),
