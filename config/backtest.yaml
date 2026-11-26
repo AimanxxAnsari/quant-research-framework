@@ -1,0 +1,10 @@
+# Backtest settings (ADR-0009). Costs are one-way, in basis points of traded notional, fixed per
+# asset class. They are assumptions, not measurements, so every study also runs them at 2x and 3x.
+fill: next_open            # next_open or next_close: when a decision made at close t is filled
+initial_nav: 1000000.0     # USD
+costs_bps:
+  etf: 2.0                 # half-spread plus slippage for liquid US ETFs
+  fx: 1.0                  # major currency pairs, institutional spot
+cost_multiplier: 1.0
+max_gross_leverage: 4.0    # sum of absolute weights; anything above is treated as a bug
+lookahead_checks: 20       # dates the weights engine re-checks on truncated data

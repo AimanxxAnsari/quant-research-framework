@@ -30,15 +30,15 @@ fred:
   OVXCLS:  {name: "CBOE crude oil volatility index", asset_class: volatility, unit: index, frequency: daily}
   GVZCLS:  {name: "CBOE gold volatility index", asset_class: volatility, unit: index, frequency: daily}
   # FX: H.10 noon New York buying rates. Quote convention matters.
-  DEXUSEU: {name: "EUR/USD", asset_class: fx, unit: USD per EUR, frequency: daily, quote: USD_per_foreign}
-  DEXUSUK: {name: "GBP/USD", asset_class: fx, unit: USD per GBP, frequency: daily, quote: USD_per_foreign}
-  DEXUSAL: {name: "AUD/USD", asset_class: fx, unit: USD per AUD, frequency: daily, quote: USD_per_foreign}
-  DEXUSNZ: {name: "NZD/USD", asset_class: fx, unit: USD per NZD, frequency: daily, quote: USD_per_foreign}
-  DEXJPUS: {name: "USD/JPY", asset_class: fx, unit: JPY per USD, frequency: daily, quote: foreign_per_USD}
-  DEXSZUS: {name: "USD/CHF", asset_class: fx, unit: CHF per USD, frequency: daily, quote: foreign_per_USD}
-  DEXCAUS: {name: "USD/CAD", asset_class: fx, unit: CAD per USD, frequency: daily, quote: foreign_per_USD}
-  DEXNOUS: {name: "USD/NOK", asset_class: fx, unit: NOK per USD, frequency: daily, quote: foreign_per_USD}
-  DEXSDUS: {name: "USD/SEK", asset_class: fx, unit: SEK per USD, frequency: daily, quote: foreign_per_USD}
+  DEXUSEU: {name: "EUR/USD", asset_class: fx, unit: USD per EUR, frequency: daily, quote: USD_per_foreign, currency: EUR}
+  DEXUSUK: {name: "GBP/USD", asset_class: fx, unit: USD per GBP, frequency: daily, quote: USD_per_foreign, currency: GBP}
+  DEXUSAL: {name: "AUD/USD", asset_class: fx, unit: USD per AUD, frequency: daily, quote: USD_per_foreign, currency: AUD}
+  DEXUSNZ: {name: "NZD/USD", asset_class: fx, unit: USD per NZD, frequency: daily, quote: USD_per_foreign, currency: NZD}
+  DEXJPUS: {name: "USD/JPY", asset_class: fx, unit: JPY per USD, frequency: daily, quote: foreign_per_USD, currency: JPY}
+  DEXSZUS: {name: "USD/CHF", asset_class: fx, unit: CHF per USD, frequency: daily, quote: foreign_per_USD, currency: CHF}
+  DEXCAUS: {name: "USD/CAD", asset_class: fx, unit: CAD per USD, frequency: daily, quote: foreign_per_USD, currency: CAD}
+  DEXNOUS: {name: "USD/NOK", asset_class: fx, unit: NOK per USD, frequency: daily, quote: foreign_per_USD, currency: NOK}
+  DEXSDUS: {name: "USD/SEK", asset_class: fx, unit: SEK per USD, frequency: daily, quote: foreign_per_USD, currency: SEK}
   # Commodity spot (EIA via FRED)
   DCOILWTICO:   {name: "WTI crude spot", asset_class: commodity, unit: USD per barrel, frequency: daily}
   DCOILBRENTEU: {name: "Brent crude spot", asset_class: commodity, unit: USD per barrel, frequency: daily}

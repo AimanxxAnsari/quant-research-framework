@@ -12,7 +12,10 @@ number returned quietly is worse than an exception.
     |   |-- InvalidParameterError          a parameter outside its valid range
     |   `-- ConfigError                    configuration that is incomplete or inconsistent
     |-- DataNotFoundError (KeyError)       a series or ticker that is not in the warehouse
-    `-- DataIntegrityError (ValueError)    stored data that is corrupt or cannot be parsed
+    |-- DataIntegrityError (ValueError)    stored data that is corrupt or cannot be parsed
+    |-- LookAheadError                     a strategy whose past decisions change when future
+    |                                      data is removed (it peeks at the future)
+    `-- AccountWipedOutError               a backtest whose net asset value reached zero
 """
 
 from __future__ import annotations
@@ -56,3 +59,11 @@ class DataNotFoundError(QuantResearchError, KeyError):
 
 class DataIntegrityError(QuantResearchError, ValueError):
     """Stored data is corrupt or cannot be parsed."""
+
+
+class LookAheadError(QuantResearchError):
+    """A strategy's decision at some date depends on data from after that date."""
+
+
+class AccountWipedOutError(QuantResearchError):
+    """A backtest's net asset value fell to zero or below, so it cannot continue."""
