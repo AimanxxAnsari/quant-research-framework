@@ -96,4 +96,24 @@ README section generated from the results (no hand-typed numbers), the full tria
 deviation from this plan is listed in a dated "Deviations" section below, with the reason.
 
 ## Deviations
-None yet.
+
+### 2026-11-26: clarifications made before the six tests were run
+These settle details the plan above left open. They were written before any of H1 to H6 was
+computed. Before writing them, a smoke test of the pipeline had shown the per-trial active
+Sharpe ratios of a few SPY trials and the net asset values of one example of each rule; no
+rule, grid or test was changed after that.
+
+1. **Start dates.** "First date with prices and rates" means the later of the two. Currencies
+   with long FX histories start where their short rate starts (GBP 1997, AUD 1990, NZD 1973,
+   JPY 1985, CHF 1972, CAD 1975, NOK and SEK 1982; EUR 1999).
+2. **Pooled tests need common dates.** H1 (SPA), the StepM part of H2 and the effective number
+   of trials in H3 need every trial's returns on the same days. They use the dates common to
+   every asset in the pool after its warm-up: ETFs from the end of CPER's warm-up (late 2012),
+   currencies from the end of EUR's (early 2000), all assets together from late 2012. Per-asset
+   tests (H4, H5) and per-trial statistics use each asset's full evaluation period.
+3. **BHY family.** The BHY haircut in H2 treats all 2,364 trials as one family; each trial's
+   p-value uses its own sample length.
+4. **DSR inputs.** In H3 the variance of Sharpe ratios is taken across all trials of the asset
+   class, each on its own evaluation period, using per-day Sharpe ratios.
+5. **Walk-forward length.** "First 5 years" in H5 means the first 1,260 trading days of the
+   asset's evaluation period; each test step is 252 trading days.
