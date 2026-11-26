@@ -78,8 +78,14 @@ def cmd_study(args, settings) -> int:
     if args.name == "pillar4":
         from quant_research.studies import pillar4, pillar4_report
 
-        pillar4.run_development(settings, recompute=not args.reuse)
-        pillar4_report.run(settings)
+        if args.open_holdout:
+            from quant_research.studies import pillar4_holdout
+
+            pillar4_holdout.run_holdout(settings)
+            pillar4_report.run_holdout_report(settings)
+        else:
+            pillar4.run_development(settings, recompute=not args.reuse)
+            pillar4_report.run(settings)
     else:
         {"pillar2": pillar2.run, "pillar5": pillar5.run}[args.name](settings)
     print(f"{args.name}: results written to README.md and reports/{args.name}/")
@@ -100,6 +106,9 @@ def main(argv: list[str] | None = None) -> int:
     st = sub.add_parser("study")
     st.add_argument("name", choices=["pillar2", "pillar4", "pillar5"])
     st.add_argument("--reuse", action="store_true", help="pillar4: reuse cached trial returns")
+    st.add_argument(
+        "--open-holdout", action="store_true", help="pillar4: open the sealed holdout (once only)"
+    )
     st.set_defaults(func=cmd_study)
     args = p.parse_args(argv)
     return args.func(args, load_settings())

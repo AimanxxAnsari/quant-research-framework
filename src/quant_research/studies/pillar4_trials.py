@@ -82,7 +82,12 @@ def annual_sharpe(r: np.ndarray) -> float:
     return float(np.mean(r) / sd * np.sqrt(TRADING_DAYS)) if sd > 0 else 0.0
 
 
-def run_asset(asset: str, end: str | None, start_eval: str | None = None) -> AssetTrials:
+def run_asset(
+    asset: str,
+    end: str | None,
+    start_eval: str | None = None,
+    variants: tuple[str, ...] = tuple(VARIANTS),
+) -> AssetTrials:
     """All trials on one asset. Evaluated from ``start_eval`` if given, else after warm-up."""
     settings = load_settings()
     base = load_config(settings)
@@ -94,8 +99,8 @@ def run_asset(asset: str, end: str | None, start_eval: str | None = None) -> Ass
     if start_eval is not None:
         keep = keep[keep >= pd.Timestamp(start_eval)]
     active: dict[str, pd.Series] = {}
-    sharpe = pd.DataFrame(index=ids, columns=list(VARIANTS), dtype=float)
-    for variant in VARIANTS:
+    sharpe = pd.DataFrame(index=ids, columns=list(variants), dtype=float)
+    for variant in variants:
         cfg = _variant_config(base, variant)
         bench = np.zeros(len(market.dates) - 1)
         if not is_fx:
@@ -110,11 +115,15 @@ def run_asset(asset: str, end: str | None, start_eval: str | None = None) -> Ass
 
 
 def run_all(
-    assets: tuple[str, ...], end: str | None, start_eval: str | None = None, workers: int = 0
+    assets: tuple[str, ...],
+    end: str | None,
+    start_eval: str | None = None,
+    workers: int = 0,
+    variants: tuple[str, ...] = tuple(VARIANTS),
 ) -> list[AssetTrials]:
     n = workers or max(1, (os.cpu_count() or 2) - 1)
     with ProcessPoolExecutor(max_workers=n) as pool:
-        futures = [pool.submit(run_asset, a, end, start_eval) for a in assets]
+        futures = [pool.submit(run_asset, a, end, start_eval, variants) for a in assets]
         return [f.result() for f in futures]
 
 

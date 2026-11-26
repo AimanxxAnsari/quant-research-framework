@@ -90,3 +90,65 @@ def test_manifest_records_code_and_data(settings):
     assert m["data_through"] == "2026-01-05" and m["stage"] == "test"
     assert len(m["data_sha256"]["prices.parquet"]) == 64
     assert len(m["git_commit"]) == 40 and isinstance(m["uncommitted_files"], list)
+
+
+def test_holdout_splits_step_yearly_from_the_holdout_start():
+    from quant_research.studies.pillar4_holdout import holdout_splits
+
+    idx = pd.bdate_range("2019-01-01", "2023-06-30")
+    splits = holdout_splits(idx, "2021-12-01", step=252)
+    first = idx.searchsorted(pd.Timestamp("2021-12-01"))
+    assert splits[0].train[-1] == first - 1 and splits[0].test[0] == first
+    assert all(s.train[0] == 0 and s.train[-1] + 1 == s.test[0] for s in splits)  # expanding
+    tested = np.concatenate([s.test for s in splits])
+    assert tested[0] == first and tested[-1] == len(idx) - 1 and len(set(tested)) == len(tested)
+
+
+def test_consistency_check_catches_a_leak():
+    import pytest
+
+    from quant_research.errors import DataIntegrityError
+    from quant_research.studies.pillar4_holdout import check_consistency
+
+    dev = _fake("A", "etf", None, 1)
+    longer = pd.concat(
+        [dev.active, dev.active.iloc[-5:].set_axis(pd.bdate_range("2012-01-02", periods=5))]
+    )
+    full = AssetTrials("A", "etf", longer, dev.sharpe)
+    assert check_consistency([full], [dev]) == 0.0
+    leaked = longer.copy()
+    leaked.iloc[10, 0] += 1e-6  # a development-period return that changed
+    with pytest.raises(DataIntegrityError):
+        check_consistency([AssetTrials("A", "etf", leaked, dev.sharpe)], [dev])
+
+
+def test_walk_forward_holdout_keeps_a_skilled_rule():
+    from quant_research.studies import pillar4_holdout as H
+
+    rng = np.random.default_rng(0)
+    idx = pd.bdate_range("2015-01-01", "2024-12-31")
+    data = rng.normal(0, 0.005, (len(idx), 4))
+    data[:, 1] += 0.002
+    ids = [f"Z|rule|p={i}" for i in range(4)]
+    trials = AssetTrials("Z", "fx", pd.DataFrame(data, index=idx, columns=ids), pd.DataFrame())
+    wf = H.walk_forward_holdout([trials])
+    assert (
+        set(wf.loc["Z", "picks"].split(" ; ")) == {"rule|p=1"} and wf.loc["Z", "holdout Sharpe"] > 2
+    )
+
+
+def test_guard_refuses_on_uncommitted_changes(settings, tmp_path, monkeypatch):
+    import pytest
+
+    from quant_research.errors import ConfigError
+    from quant_research.studies import pillar4_holdout as H
+
+    monkeypatch.setattr(H, "_git", lambda root, *a: "" if a[0] != "ls-files" else "x")
+    monkeypatch.setattr(H, "report_dir", lambda s, stage="development": tmp_path / stage)
+    H.guard(settings)  # committed, clean, never opened: allowed
+    (tmp_path / "holdout").mkdir()
+    with pytest.raises(ConfigError, match="already been opened"):
+        H.guard(settings)
+    monkeypatch.setattr(H, "_git", lambda root, *a: "" if a[0] == "ls-files" else "")
+    with pytest.raises(ConfigError, match="committed"):
+        H.guard(settings)
