@@ -42,6 +42,8 @@ class Market:
     asset_day_count: Mapping[str, int]
     cash_rate: pd.Series
     cash_day_count: int = 360
+    high_prices: pd.DataFrame | None = None
+    low_prices: pd.DataFrame | None = None
     validate: InitVar[bool] = True
 
     def __post_init__(self, validate: bool) -> None:
@@ -49,6 +51,7 @@ class Market:
             self._check_shape()
             self._check_prices()
             self._check_rates()
+            self._check_range()
 
     def _check_shape(self) -> None:
         idx = self.close.index
@@ -94,6 +97,40 @@ class Market:
         if etfs and (self.asset_rate[etfs].to_numpy() != 0).any():
             raise InvalidParameterError("ETFs earn no interest of their own; asset_rate must be 0")
 
+    def _check_range(self) -> None:
+        if (self.high_prices is None) != (self.low_prices is None):
+            raise MisalignedDataError("give both high and low prices, or neither")
+        if self.high_prices is None or self.low_prices is None:
+            return
+        for name, frame in (("high", self.high_prices), ("low", self.low_prices)):
+            if not frame.index.equals(self.close.index) or list(frame.columns) != list(
+                self.close.columns
+            ):
+                raise MisalignedDataError(f"{name} must have the same dates and assets as close")
+        h, lo = self.high_prices.to_numpy(dtype=float), self.low_prices.to_numpy(dtype=float)
+        c, o = self.close.to_numpy(dtype=float), self.open.to_numpy(dtype=float)
+        if not (
+            np.array_equal(np.isnan(h), np.isnan(c)) and np.array_equal(np.isnan(lo), np.isnan(c))
+        ):
+            raise MissingValuesError("high and low must be missing exactly where close is")
+        ok = ~np.isnan(c)
+        tol = 1e-9 * np.maximum(1.0, np.abs(c[ok]))
+        bad = (h[ok] < np.maximum(o[ok], c[ok]) - tol) | (lo[ok] > np.minimum(o[ok], c[ok]) + tol)
+        if bad.any():
+            raise InvalidParameterError("high must be >= open and close, low <= open and close")
+
+    @property
+    def high(self) -> pd.DataFrame:
+        if self.high_prices is None:
+            raise MissingValuesError("this market has no high prices")
+        return self.high_prices
+
+    @property
+    def low(self) -> pd.DataFrame:
+        if self.low_prices is None:
+            raise MissingValuesError("this market has no low prices")
+        return self.low_prices
+
     @property
     def dates(self) -> pd.DatetimeIndex:
         return pd.DatetimeIndex(self.close.index)
@@ -113,6 +150,8 @@ class Market:
             asset_day_count=self.asset_day_count,
             cash_rate=self.cash_rate.iloc[:end],
             cash_day_count=self.cash_day_count,
+            high_prices=None if self.high_prices is None else self.high_prices.iloc[:end],
+            low_prices=None if self.low_prices is None else self.low_prices.iloc[:end],
             validate=False,  # a slice of a valid market is valid
         )
 

@@ -46,23 +46,25 @@ def load_market(
     if unknown:
         raise ConfigError(f"no FX series configured for {unknown}")
 
-    frames_open, frames_close = [], []
+    fields = ("adj_open", "adj_high", "adj_low", "adj_close")
+    frames: dict[str, list[pd.DataFrame]] = {f: [] for f in fields}
     if etfs:
-        frames_open.append(access.prices(settings, list(etfs), field="adj_open"))
-        frames_close.append(access.prices(settings, list(etfs), field="adj_close"))
-    calendar = frames_close[0].index if etfs else None
+        for f in fields:
+            frames[f].append(access.prices(settings, list(etfs), field=f))
+    calendar = frames["adj_close"][0].index if etfs else None
     if fx:
         spot = access.fx_usd_per_foreign(settings, [ids[c] for c in fx])
         spot.columns = list(fx)
         if calendar is not None:
             spot = spot.reindex(spot.index.union(calendar)).ffill(limit=FX_FILL_DAYS)
             spot = spot.reindex(calendar)
-        frames_open.append(spot)
-        frames_close.append(spot)
-    opens = _window(pd.concat(frames_open, axis=1), start, end)
-    close = _window(pd.concat(frames_close, axis=1), start, end)
-    close = close.dropna(how="all")
-    opens = opens.reindex(close.index)
+        for f in fields:  # one fixing a day: open = high = low = close
+            frames[f].append(spot)
+    close = _window(pd.concat(frames["adj_close"], axis=1), start, end).dropna(how="all")
+    opens, high, low = (
+        _window(pd.concat(frames[f], axis=1), start, end).reindex(close.index)
+        for f in ("adj_open", "adj_high", "adj_low")
+    )
 
     currencies = ["USD", *fx]
     # raises MissingValuesError, naming the currency, if a rate does not cover the period
@@ -83,4 +85,6 @@ def load_market(
         },
         cash_rate=short["USD"],
         cash_day_count=rates.day_count(settings, "USD"),
+        high_prices=high,
+        low_prices=low,
     )
